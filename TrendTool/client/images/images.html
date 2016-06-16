@@ -1,0 +1,40 @@
+<template name="image1">
+	<div class="col col-md-6 col-lg-3 col-xl-2">
+		<div class="image">
+			<div class="imageTumbnail"> 
+				<img class="img-responsive" src="{{c.url public_id width=500 height=500 crop="fill"}}">
+			</div>
+			<div class="content">
+				<p>{{description}}</p>
+				<!-- <span class="glyphicon glyphicon-user"></span><span class="small"> {{username}}</span><br/> -->
+				<span class="glyphicon glyphicon-globe"></span><a href="{{sourceURL}}" class="small"> {{sourceURL}}</a><br/>
+				<span class="glyphicon glyphicon-map-marker"></span><span class="small"> {{formatted_address}}</span>
+				<!-- <div class="tags label label-default">{{tagNames tags}}</div> -->
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="image">
+	<div class="image is-collapsed">
+		<div class="image--basic">
+			<a href="#expand-jump-1">
+				<img id="expand-jump-1" class="basic__img" src="{{c.url public_id width=250 height=250 crop="fill"}}" alt="Fashion 1" />
+			</a>
+			<div class="arrow--up"></div>
+		</div>
+		<div class="image--expand">
+			<a href="#close-jump-1" class="expand__close"></a>
+			<img class="image--large" src="{{c.url public_id width=500 crop="fill"}}"/>
+			<div class="image--details">
+				<h3>Veggies sunt bona vobis</h3>
+				<p>{{description}}</p>
+				{{#if URLis ""}}
+				
+				{{else}}
+					<a href="{{sourceURL}}">Ga naar de bron</a>
+				{{/if}}
+			</div>
+		</div>
+	</div>
+</template>

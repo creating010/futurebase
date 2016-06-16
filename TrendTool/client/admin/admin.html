@@ -1,0 +1,50 @@
+<template name="admin">
+	<div class="section">
+		<div class="container">
+			<div class="row">
+				<p>ADMIN</p>
+				<select name="usersSelection" class="usersSelection">
+					{{#each listGroups}}
+						<option value="{{_id}}">{{projectName}}</option>
+					{{/each}}
+				</select>
+				<table>
+					<tr>
+						<th>Index</th>
+						<th>Naam</th>
+						<th>Foto's</th>
+					</tr>
+					{{#each listUsers}}
+						<tr>
+							<td>{{offset @index}}</td>
+							<td>{{profile.name}}</td>
+							<td>{{userImageCount _id}}</td>
+						</tr>
+					{{/each}}
+				</table>
+				<!-- <tr>
+					<th scope="row">{{@index}}</th>
+					<td><input type="text" class="form-control input-sm" id="usernameInput-{{_id}}" placeholder="{{profile.name}}" value={{profile.name}} disabled></td>
+					<td><input type="text" class="form-control input-sm" id="emailInput-{{_id}}" placeholder="{{emails.[0].address}}" value={{emails.[0].address}} disabled></td>
+					<td><span class="badge">{{userImageCount _id}}</span></td>
+					<td><input type="number" class="form-control input-sm" id="fashionInput-{{_id}}" placeholder="{{profile.fashionVal}}" min="1" max="5" size="1" value={{profile.fashionVal}}></td>
+					<td><input type="number" class="form-control input-sm" id="techInput-{{_id}}" placeholder="{{profile.technologyVal}}" min="1" max="5" size="1" value={{profile.technologyVal}}></td>
+					<td><input type="number" class="form-control input-sm" id="cultureInput-{{_id}}" placeholder="{{profile.cultureVal}}" min="1" max="5" size="1" value={{profile.cultureVal}}></td>
+					<td><input type="number" class="form-control input-sm" id="politicsInput-{{_id}}" placeholder="{{profile.politicsVal}}" min="1" max="5" size="1" value={{profile.politicsVal}}></td>
+					<td><input type="number" class="form-control input-sm" id="economyInput-{{_id}}" placeholder="{{profile.economicsVal}}" min="1" max="5" size="1" value={{profile.economicsVal}}></td>
+					<td>
+						<select class="form-control input-sm" id="bsr-{{_id}}">
+							<option value="{{profile.bsrVal}}">{{profile.bsrVal}}</option>
+							<option value="yellow">yellow</option>
+							<option value="red">red</option>
+							<option value="blue">blue</option>
+							<option value="green">green</option>
+						</select>
+					</td>
+					<td><input type="number" class="form-control input-sm" id="nfc-{{_id}}" placeholder="{{profile.nfcVal}}" min="18" max="90" size="4" value={{profile.nfcVal}}></td>
+					<td><input class="btn btn-default updatebutton" type="submit" value="update"></td>
+				</tr> -->
+			</div>
+		</div>
+	</div>
+</template>

@@ -1,0 +1,22 @@
+<template name="profile">
+	{{> topBar}}
+	{{> userListImages}}
+</template>
+
+<template name="userListImages">
+	<div class="main-content allImages">
+		<div class="container">
+			<div class="row">
+				<section class="image-grid">
+					{{#if userImages.count}}
+						{{#each userImages}}
+							{{> image}}
+						{{/each}}
+					{{else}}
+						<p>Geen uploads</p>
+					{{/if}}
+				</section>
+			</div>
+		</div>
+	</div>
+</template>

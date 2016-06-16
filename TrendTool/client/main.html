@@ -1,0 +1,336 @@
+<head>
+	<title>TrendTool</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+	{{#if currentUser}}
+	
+	{{else}}
+	{{> registerLogin}}
+	{{/if}}
+
+	{{> header}}
+</body>
+
+<template name="header">
+	<header>
+		<div class="container">
+			<div class="row">
+				<div class="col col-xs-6 col-md-2 col-md-offset-1">
+					<div class="name">
+						<a href="{{ pathFor 'home' }}"><h2>TrendTool</h2></a>
+					</div>
+				</div>
+				<div class="col col-md-3 col-md-offset-6">
+					<nav>
+						<ul>
+							<li><a href="{{ pathFor 'map' }}">Map</a></li>
+							{{#if currentUser}}
+							<li><a href="{{ pathFor 'dashboard' }}" class="active">Dashboard</a></li>
+							<li class="user loggedIn">
+								<a href="{{ pathFor 'profile' }}" class=""><i class="fa fa-user"></i></a>
+								<ul class="dropdownMenu">
+									<li><a href="#" class="logout">Uitloggen</a></li>
+									<li><a href="#" class="logout">Uitloggen</a></li>
+									<li><a href="#" class="logout">Uitloggen</a></li>
+								</ul>
+							</li>
+							{{else}}
+							<li class="user notLoggedIn">
+								<a href="#"><i class="fa fa-user"></i></a>
+							</li>
+							{{/if}}
+						</ul>
+					</nav>
+				</div>
+			</div>
+			<div class="second">
+				<div class="row">
+					<div class="col col-xs-4 col-md-1">
+						<div class="logo">
+							<img src="assets/images/TrendLab.png">
+						</div>
+					</div>
+					<div class="col col-xs-4 col-md-8">
+						<div class="title">
+							<h1>{{getTitle}}</h1>
+						</div>
+					</div>
+					{{#if currentUser}}
+					<div class="col col-xs-4 col-md-2 col-md-offset-1">
+						<div class="account">
+							<a href="{{ pathFor 'profile' }}" class="btn icon-upload">{{userImageCount}}</a>
+						</div>
+					</div>
+					{{/if}}
+				</div>
+			</div>
+		</div>
+	</header>
+</template>
+
+<template name="registerLogin">
+	<div class="registerLogin">
+		<div class="login-page">
+			<div class="close">
+				<a href="#"><i class="fa fa-close"></i></a>
+			</div>
+			<div class="form">
+				<form class="register-form form1">
+					<h3>Registreren</h3>
+					<input type="text" placeholder="Voornaam" id="registerFirstname" required/>
+					<input type="text" placeholder="Achternaam" id="registerSurname" required/>
+					<input type="email" placeholder="E-mailadres" id="registerEmail" required/>
+					<input type="password" placeholder="Wachtwoord" id="registerPassword" required/>
+					<!-- <button type="submit" value="Register" class="register">Registreren</button> -->
+					<input type="submit" value="Verder" id="registerSubmit1" class="advance">
+					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
+				</form>
+				<form class="register-form form2">
+					<h3>Registreren</h3>
+
+					<div class="intrests">
+						<div class="interst">
+							<p>Mode:</p>
+							<p class="right">3</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerFashion">
+						</div>
+						<div class="interst">
+							<p>Cultuur:</p>
+							<p class="right">3</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerCulture">
+						</div>
+						<div class="interst">
+							<p>Technologie:</p>
+							<p class="right">3</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerTechnology">
+						</div>
+						<div class="interst">
+							<p>Politiek:</p>
+							<p class="right">3</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerPolitics">
+						</div>
+						<div class="interst">
+							<p>Economie:</p>
+							<p class="right">3</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerEconomics">
+						</div>
+						<datalist id=steps>
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
+							<option>4</option>
+							<option>5</option>
+						</datalist>
+					</div>
+
+					<input type="submit" value="Terug" class="return">
+					<input type="submit" value="Verder" id="registerSubmit2" class="advance">
+					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
+				</form>
+				<form class="register-form form3">
+					<h3>Registreren</h3>
+					<input type="text" placeholder="BSR model" id="test2"/>
+					<input type="submit" value="Terug" class="return">
+					<input type="submit" value="Verder" id="registerSubmit3" class="advance">
+					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
+				</form>
+				<form class="register-form form4">
+					<h3>Registreren</h3>
+					<div class="nfcTest">
+						<div class="nfcQuestion">
+							<p>Als ik moet kiezen heb ik liever een ingewikkeld dan een simpel probleem.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik ben graag verantwoordelijk voor een situatie waarin veel nagedacht moet worden.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Denken is niet precies mijn idee van plezier hebben.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik doe liever iets waarbij weinig nagedacht hoeft te worden dan iets waarbij mijn denkvermogen zeker op de proef wordt gesteld.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Iets langdurig en precies afwegen geeft mij voldoening.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik denk alleen zoveel als nodig is.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik denk liever over kleine dagelijkse dan over lange termijn projecten na.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik hou van taken waarbij weinig nagedacht hoeft te worden wanneer ik ze eenmaal geleerd heb.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Het idee om op mijn verstand te vertrouwen vind ik aantrekkelijk.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik geniet echt van een taak waarin men met nieuwe oplossingen voor problemen moet komen.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Nieuwe manieren leren om te denken trekt mij niet bijzonder aan.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Het idee om abstract te denken vind ik aantrekkelijk.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik heb liever een taak die intellectueel, moeilijk en belangrijk is, dan een taak die enigszins belangrijk is maar waarbij je niet veel hoeft na te denken.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Ik vind het voldoende wanneer iets blijkt te werken: hoe of waarom het precies werkt interesseert mij niet.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+						<div class="nfcQuestion">
+							<p>Gewoonlijk maak ik zelfs uitgebreid afwegingen over zaken die niet persoonlijk op mijzelf betrekking hebben.</p>
+							<select required>
+								<option value="" disabled selected hidden>Maak een keuze</option>
+								<option value="1">Zeer oneens</option>
+								<option value="2">Oneens</option>
+								<option value="3">Eens noch oneens</option>
+								<option value="4">Eens</option>
+								<option value="5">Zeer eens</option>
+							</select>
+						</div>
+					</div>
+					<input type="submit" value="Terug" class="return">
+					<input type="submit" value="Registeren" id="registerSubmit4">
+					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
+				</form>
+
+				<form class="login-form">
+					<h3>Inloggen</h3>
+					<input type="text" placeholder="E-mail" id="loginEmail"/>
+					<input type="password" placeholder="Wachtwoord" id="loginPassword"/>
+					<!-- <button class="login">Inloggen</button> -->
+					<input type="submit" value="Inloggen" id="loginSubmit">
+					<p class="message">Nog niet geregistreerd? <a href="#">Maak een account</a></p>
+				</form>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="loading">
+	<div class="container">
+		<div class="row">
+			{{> spinner}}
+		</div>
+	</div>
+</template>

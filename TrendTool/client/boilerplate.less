@@ -1,0 +1,61 @@
+@import "variables.less";
+
+.btn {
+	border: 2px solid @grey;
+	border-radius: 25px;
+	color: @blue;
+	display: inline-block;
+	font-weight: bold;
+	padding: 13px 30px;
+	text-align: center;
+	text-transform: uppercase;
+
+	-webkit-transition: all 0.4s ease-in-out;
+	-moz-transition: all 0.4s ease-in-out;
+	-o-transition: all 0.4s ease-in-out;
+	transition: all 0.4s ease-in-out;
+
+	&:hover,
+	&:focus {
+		background-color: @light-blue;
+		border-color: @blue;
+		outline: none;
+	}
+	&:before {
+		margin-right: 12px;
+	}
+	&.btn-square {
+		background-color: @blue;
+		border-color: @dark-blue;
+		border-radius: 7px;
+		color: @white;
+		padding: 19px 30px;
+
+		&:hover,
+		&:focus {
+			background-color: @dark-blue;
+			outline: none;
+		}
+	}
+}
+
+.icon-upload:before {
+	content: "\f093";
+}
+
+.icon-close:before {
+	content: "\f00d;";
+}
+
+.dropdown {
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#fcfcfc 100%);
+	background: -moz-linear-gradient(top,  #ffffff 0%, #fcfcfc 100%);
+	background: linear-gradient(to bottom,  #ffffff 0%,#fcfcfc 100%);
+	border: 2px solid @grey;
+	border-radius: 4px;
+	color: @blue-purple;
+	cursor: pointer;
+	font-weight: bold;
+	padding: 18px 30px;
+	text-transform: uppercase;
+}
