@@ -1,9 +1,112 @@
 <template name="map">
-  <div class="section">
-    <div class="container">
-      <div class="row">
-        <p>MAP</p>
-      </div>
-    </div>
-  </div>
+	{{> topBarFilters}}
+	<div class="section map">
+		{{> mapView}}
+	</div>
+</template>
+
+<template name="topBarFilters">
+	<div class="top-bar">
+		<div class="container">
+			<div class="row">
+				<div class="topBar">
+					<div class="col col-md-3">
+						<div class="filterTags">
+							<h2>Tags</h2>
+							<ul class="activeTags">
+								{{#each allClassTags}}
+									<li class="tagFilter">
+										<div class="checkboxSlide">
+											<input type="checkbox" value="{{value}}" id=slideThree{{@index}}  checked>
+											<label for="slideThree{{@index}}"></label>
+											{{name}}
+										</div>
+									</li>
+								{{/each}}
+							</ul>
+						</div>
+					</div>
+					<div class="col col-md-3">
+						<div class="filterInterests">
+							<h2>Interestprofile</h2>
+							<ul class="activeInterests">
+								{{#each allInterests}}
+									<li class="interestsFilter">
+										<input type="checkbox" value="{{value}}" {{interestIsActive}}>{{name}}
+									</li>
+								{{/each}}
+							</ul>
+						</div>
+					</div>
+					<div class="col col-md-3">
+						<div class="filterBSR">
+							<h2>BSR profile</h2>
+							<ul class="activeBSR">
+								{{#each allBSROptions}}
+									<li class="BSRFilter">
+										<input type="radio" name="BSRFilter" value="{{value}}" {{BSRIsActive}}>{{value}}
+									</li>
+								{{/each}}
+							</ul>
+						</div>
+					</div>
+					<div class="col col-md-3">
+						<div class="filterNFC">
+							<h2>Curiosity</h2>
+							<ul class="activeNFC">
+								{{#each allNFCOptions}}
+									<li class="NFCFilter">
+										<input type="checkbox" value="{{value}}" {{NFCIsActive}}>{{name}}
+									</li>
+								{{/each}}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="mapView">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<div class="map-container">
+					{{> googleMap name="trendToolMarkers" options=TrendToolMapOptions}}
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="mapInfoWindow">
+	<div>
+		<div class="imageListElement">
+			<a href="{{c.url public_id}}" target="_blank"><img class="img-responsive" src="{{c.url public_id width=242 height=200 crop="fill"}}"></a>
+		</div>
+		<div class="info">
+			<ul class="selectedTags">
+				{{#each allImageTags}}
+					<li class="imageTag">
+						{{name}}
+					</li>
+				{{/each}}
+			</ul>
+			<p>{{description}}</p><br/>
+			{{#if sourceURL}}
+				<i class="fa fa-globe"></i><p><a href="https://{{sourceURL}}" target="_blank" class="small">{{sourceURL}}</a></p><br/>
+			{{/if}}
+			<i class="fa fa-map-marker"></i><p>{{formatted_address}}</p>
+		</div>
+
+
+		<!-- <div class="caption">
+			{{> taggingAreaDashboard}}
+			<p>{{comment}}</p>
+			<span class="glyphicon glyphicon-globe"></span><a href="{{sourceURL}}" class="small"> {{sourceURL}}</a><br/>
+			<span class="glyphicon glyphicon-map-marker"></span><span class="small"> {{formatted_address}}</span>
+			<div class="tags label label-default">{{tagNames tags}}</div>
+		</div> -->
+	</div>
 </template>

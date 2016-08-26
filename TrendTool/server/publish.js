@@ -18,6 +18,17 @@ Meteor.publish("allGroups", function(){
 	return Groups.find({});
 });
 
-Meteor.publish("allThemes", function(){
-	return Themes.find({});
+Meteor.publishComposite('groupsWithStudents', function() {
+	return {
+		find: function() {
+			return Groups.find();
+		},
+		children: [
+			{
+				find: function(group) {
+					return group.students();
+				}
+			}
+		]
+	};
 });

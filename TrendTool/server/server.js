@@ -13,34 +13,12 @@ Meteor.startup(() => {
 
 	Meteor.methods({
 		addRoleToUser: function(id, role) {
+
 			Roles.addUsersToRoles(id, role);
 		},
-		createNewUser: function (emailVar, passwordVar, firstnameVar, surnameVar, bsrColor, nfcValue, fashionVal, techVal, cultureVal, politicsVal, econVal, roles) {
-			var user = {
-				'email': emailVar,
-				'password': passwordVar,
-				profile: {
-					'name': firstnameVar + " " + surnameVar,
-					'firstname': firstnameVar,
-					'surname': surnameVar,
-					'bsrColor': bsrColor,
-					'nfcValue': nfcValue,
-					'fashionVal': fashionVal,
-					'techVal': techVal,
-					'cultureVal': cultureVal,
-					'politicsVal': politicsVal,
-					'econVal': econVal
-				},
-				roles: roles
-				// ,
-				// groups: []
-			};
+		checkSamr: function () {
 
-			var id = Accounts.createUser(user);
-
-			if (user.roles.length > 0) {
-				Roles.addUsersToRoles(id, user.roles);
-			}
+			return Meteor.http.call("GET", "http://smartweb3.smartagent.nl/ennis/surveys/bsrhr/json/data.json");
 		},
 		createUserWithRole: function(user, role) {
 			var userId;
@@ -64,7 +42,16 @@ Meteor.startup(() => {
 			});
 		},
 		deleteUser: function(id){
+
 			return Meteor.users.remove(id);
+		},
+		userIsInRole: function (id, role) {
+			
+			return Roles.userIsInRole(id, role, Roles.GLOBAL_GROUP);
+		},
+		removeUsersFromRoles: function(id, role) {
+
+			Roles.removeUsersFromRoles(id, role, Roles.GLOBAL_GROUP);
 		},
 		returnAllGroups: function() {
 			var results = [];

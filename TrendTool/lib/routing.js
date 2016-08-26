@@ -1,18 +1,15 @@
 Router.route('/', function () {
-	// this.wait(Meteor.subscribe('allImages'));
+	this.wait(Meteor.subscribe('allImages'));
 	this.wait(Meteor.subscribe('allUsers'));
+	this.wait(Meteor.subscribe('allGroups'));
+	this.wait(Session.set('adminPage', false));
 	this.wait(Session.set('pageTitle', 'Home'));
 
 	if (this.ready()) {
 		this.render('home');
 
 		if (Session.get('error') != null) {
-			Bert.alert({
-				message: Session.get('error'),
-				type: 'danger',
-				style: 'growl-top-right',
-				icon: 'fa-close'
-			});
+			Notifications.error('FutureBase', Session.get('error'));
 
 			Session.set('error', null);
 		}
@@ -25,11 +22,13 @@ Router.route('/dashboard', function () {
 	// add the subscription handle to our waitlist
 	this.wait(Meteor.subscribe('allTags'));
 	this.wait(Meteor.subscribe('allImages'));
+	this.wait(Meteor.subscribe('allGroups'));
+	this.wait(Session.set('adminPage', false));
+	this.wait(Session.set('pageTitle', 'Dashboard'));
 
 	// this.ready() is true if all items in the wait list are ready
 	if (Meteor.userId()) {
 		if (this.ready()) {
-			Session.set('pageTitle', 'Dashboard')
 			this.render('lessonImages');
 		} else {
 			this.render('loading');
@@ -37,17 +36,15 @@ Router.route('/dashboard', function () {
 	} else {
 		Router.go('/');
 
-		Bert.alert({
-			message: 'Je bent niet ingelogd',
-			type: 'danger',
-			style: 'growl-top-right',
-			icon: 'fa-close'
-		});
+		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");
 	}
 });
 
 Router.route('/map', function () {
 	this.wait(Meteor.subscribe('allImages'));
+	this.wait(Meteor.subscribe('allGroups'));
+	this.wait(Meteor.subscribe('allTags'));
+	this.wait(Session.set('adminPage', false));
 	this.wait(Session.set('pageTitle', 'Map'));
 
 	if (this.ready()) {
@@ -60,82 +57,99 @@ Router.route('/map', function () {
 Router.route('/profile', function () {
 	// add the subscription handle to our waitlist
 	this.wait(Meteor.subscribe('allImages'));
+	this.wait(Meteor.subscribe('allTags'));
+	this.wait(Meteor.subscribe('allGroups'));
+	this.wait(Session.set('adminPage', false));
+	this.wait(Session.set('pageTitle', 'Profile'));
 
 	// this.ready() is true if all items in the wait list are ready
 	if (Meteor.userId()) {
 		if (this.ready()) {
-			Session.set('pageTitle', 'Profiel')
 			this.render('profile');
 		} else {
 			this.render('loading');
 		}
 	} else {
 		Router.go('/');
-		Session.set('error', 'Je bent niet ingelogd.');
+		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");
 	}
 });
 
 Router.route('/admin', function () {
-	if (this.userId()) {
-		if (this.ready()) {
-			Session.set('pageTitle', 'Administration');
-			this.render('admin');
+	this.wait(Meteor.subscribe('allUsers'));
+	this.wait(Meteor.subscribe('allImages'));
+	this.wait(Meteor.subscribe('allGroups'));
+	this.wait(Meteor.subscribe('allTags'));
+	this.wait(Session.set('adminPage', true));
+	this.wait(Session.set('pageTitle', 'Administration'));
+
+	if (Meteor.userId()) {
+		this.render('loading');
+
+		if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
+			if (this.ready()) {
+				this.render('admin');
+			} else {
+				this.render('loading');
+			}
 		} else {
-			this.render('loading');
+			Router.go('/');
+			Session.set('error', 'You have not the right to be here, get out as soon as possible!');
 		}
 	} else {
 		Router.go('/');
-		Session.set('error', 'Je bent niet ingelogd.');
+		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");
 	}
 });
 
+Router.route('/admin/groups', function () {
+	this.wait(Meteor.subscribe('allUsers'));
+	this.wait(Meteor.subscribe('allGroups'));
+	this.wait(Meteor.subscribe('allTags'));
+	this.wait(Meteor.subscribe('allImages'));
+	this.wait(Session.set('adminPage', true));
+	this.wait(Session.set('pageTitle', 'Groups'));
 
+	if (Meteor.userId()) {
+		this.render('loading');
 
-// // Router.configure({
-// //   // layoutTemplate: "MasterLayout",
-// //   // loadingTemplate: "Loading",
-// //   notFoundTemplate: "Maintenance"
-// //  blablabla
-// // });
+		if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
+			if (this.ready()) {
+				this.render('groups');
+			} else {
+				this.render('loading');
+			}
+		} else {
+			Router.go('/');
+			Session.set('error', 'You have not the right to be here, get out as soon as possible!');
+		}
+	} else {
+		Router.go('/');
+		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");
+	}
+});
 
-// // Router.route('/maintenance', function () {
-// //   this.render('Maintenance');
-// // });
+Router.route('/admin/tags', function () {
+	this.wait(Meteor.subscribe('allTags'));
+	this.wait(Meteor.subscribe('allGroups'));
+	this.wait(Session.set('adminPage', true));
+	this.wait(Session.set('pageTitle', 'Tags'));
 
-// Router.route('/', function () {
-//   this.render('userUploads');
-// });
+	if (Meteor.userId()) {
+		this.render('loading');
 
-// Router.route('/users', function() {
-//   this.render('userPage')
-// });
-
-// Router.route('/dashboard', function () {
-//   // add the subscription handle to our waitlist
-//   this.wait(Meteor.subscribe('allImageEntriesDB', this.params._id));
-
-//   // this.ready() is true if all items in the wait list are ready
-
-//   if (this.ready()) {
-//     this.render('overviewDashboard');
-//   } else {
-//     this.render('Loading');
-//   }
-// });
-
-// Router.route('/map', function () {
-//   // add the subscription handle to our waitlist
-//   this.wait(Meteor.subscribe('allImageEntriesDB', this.params._id));
-
-//   // this.ready() is true if all items in the wait list are ready
-
-//   if (this.ready()) {
-//     this.render('mapPage');
-//   } else {
-//     this.render('Loading');
-//   }
-// });
-
-// Router.route('/tags', function () {
-//   this.render('tagAdministration');
-// });
+		if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
+			if (this.ready()) {
+				this.render('tags');
+			} else {
+				this.render('loading');
+			}
+		} else {
+			Router.go('/');
+			Session.set('error', 'You have not the right to be here, get out as soon as possible!');
+		}
+	} else {
+		Router.go('/');
+		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");
+	}
+});

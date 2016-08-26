@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 Images = new Mongo.Collection("images");
 
 Meteor.methods({
-	addImage: function(public_id, sourceURL, tagsIds, formatted_address, gps, description, bsrColor, nfcValue, fashionVal, techVal, cultureVal, politicsVal, econVal){
+	addImage: function(public_id, sourceURL, tagsIds, formatted_address, gps, description, groupId, bsrColor, nfcValue, fashionVal, techVal, cultureVal, politicsVal, econVal){
 		//here is the code
 		if (! Meteor.userId()) {
 			throw new Meteor.Error("not-authorized");
@@ -12,6 +12,7 @@ Meteor.methods({
 		Images.insert({
 			'public_id': public_id,
 			'owner': this.userId,						// _id of logged in user
+			'groupId': groupId,							// id of group where image belong to
 			'sourceURL': sourceURL,						// *option* url from image
 			'tags': tagsIds,							// array with ids of tags
 			'formatted_address': formatted_address,		// name of street
@@ -25,6 +26,18 @@ Meteor.methods({
 			'politicsVal': politicsVal,					// politicsValue of uplader
 			'econVal': econVal							// econValue of uplader
 		})
+	},
+	updateImage: function(imageId, sourceURL, formatted_address, gps, description) {
+		if (! Meteor.userId()) {
+			throw new Meteor.Error("not-authorized");
+		}
+
+		Images.update(imageId, { $set: {
+			'sourceURL': sourceURL,
+			'formatted_address': formatted_address,
+			'gps': gps,
+			'description': description
+		}});
 	}
 });
 

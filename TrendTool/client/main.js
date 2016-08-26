@@ -5,17 +5,22 @@ import { Meteor } from 'meteor/meteor';
 
 import './main.html';
 
-var firstnameVar;
-var surnameVar;
-var emailVar;
-var passwordVar;
-var user;
+var firstnameVar,
+	surnameVar,
+	emailVar,
+	passwordVar,
+	user,
+	sessionId;
 
 Meteor.startup(function() {
 	GoogleMaps.load({
 	    //key: Meteor.settings.public.googleMapsApiKey,
 	    key: "AIzaSyCPExERDJVYXWgAOEDAYf7L2uKHifAgtlE",
 		libraries: ['places','visualization']  // also accepts an array if you need more than one
+	});
+
+	_.extend(Notifications.defaultOptions, {
+		timeout: 3000
 	});
 });
 
@@ -28,16 +33,22 @@ $.cloudinary.config({
 });
 
 Meteor.Spinner.options = {
-	color: '#408AC9'
+	color: '#000'
 };
 
 if (Meteor.isClient) {
+	Template.body.helpers({
+		adminPage: function () {
+			return Session.get("adminPage");
+		}
+	});
+	
 	Template.header.helpers({
 		getTitle: function() {
 			return Session.get("pageTitle");
 		},
 		userImageCount: function() {
-			return Images.find({owner : Meteor.userId()}).count();
+			return Images.find({owner : Meteor.userId()}).count();;
 		}
 	});
 
@@ -50,27 +61,38 @@ if (Meteor.isClient) {
 		'click li a.logout': function(event){
 			event.preventDefault();
 
-			console.log('click');
 			Meteor.logout(function() {
 				Router.go('/');
 
-				Bert.alert({
-					message: 'Je bent uitgelogd!',
-					type: 'info',
-					style: 'growl-top-right',
-					icon: 'fa-check'
-				});
+				Notifications.success('FutureBase', "You're succesfully logout. Hope you come back soon, my friend!");
 			});
 		},
 		'click li.notLoggedIn a': function(event){
 			event.preventDefault();
 
 			$('.registerLogin').fadeToggle("slow");
-		},
+		}
 	});
 
 	Template.registerLogin.onRendered(function() {
 		$('.intrests .interst').shuffle();
+		$('.nfcTest .nfcQuestion').shuffle();
+	});
+
+	Template.registerLogin.helpers({
+		getGroups: function () {
+			var allGroups = Groups.find().fetch();
+			var data = [];
+
+			for (var i = 0; i < allGroups.length; i++) {
+				data.push({
+					id: allGroups[i]['_id'],
+					name: allGroups[i]['name']
+				});
+			}
+
+			return data;
+		}
 	});
 
 	Template.registerLogin.events({
@@ -80,48 +102,23 @@ if (Meteor.isClient) {
 			var emailVar = event.target.loginEmail.value;
 			var passwordVar = event.target.loginPassword.value;
 
-			console.log("emailVar", emailVar, "passwordVar", passwordVar)
-
 			Meteor.loginWithPassword(emailVar, passwordVar, function(err) {
 				if (!err) {
-					console.log("User logged in");
-
-					Bert.alert({
-						title: "Welkom: " + Meteor.user().profile.name,
-						message: 'Je bent ingelogd!',
-						type: 'success',
-						style: 'growl-top-right',
-						icon: 'fa-check'
-					});				
+					Notifications.success("Welcome: " + Meteor.user().profile.name, "You entered the FutureBase.");
 				} else {
 					console.log("Not logged in, and error occurred:", err);
 
 					switch(err.reason) {
 						case "Match failed":
-							Bert.alert({
-								message: 'Vul alle velden in',
-								type: 'danger',
-								style: 'growl-top-right',
-								icon: 'fa-close'
-							});
+							Notifications.error('FutureBase', 'Please make sure everything is filled.');
 						break;
 
 						case "User not found":
-							Bert.alert({
-								message: 'E-mailadres bestaat niet',
-								type: 'danger',
-								style: 'growl-top-right',
-								icon: 'fa-close'
-							});
+							Notifications.error('FutureBase', "This e-mailaddress can't be found in our database");
 						break;
 
 						case "Incorrect password":
-							Bert.alert({
-								message: 'Wachtwoord is incorrect',
-								type: 'danger',
-								style: 'growl-top-right',
-								icon: 'fa-close'
-							});
+							Notifications.error('FutureBase', 'This password does not match with the e-mailaddress.');
 						break;
 					}
 				}
@@ -145,52 +142,78 @@ if (Meteor.isClient) {
 			surnameVar = $('#registerSurname').val();
 			emailVar = $('#registerEmail').val();
 			passwordVar = $('#registerPassword').val();
+			classVar = $('#registerClass').val();
+			tokenVar = $('#registerToken').val();
+			studentnumberVar = $('#registerStudentnumber').val();
 
-			if (firstnameVar != '' && surnameVar != '' && emailVar != '' && passwordVar != '') {
-				user = {
-					'email': emailVar,
-					'password': passwordVar,
-					profile: {
-						'name': firstnameVar + " " + surnameVar,
-						'firstname': firstnameVar,
-						'surname': surnameVar,
-						'bsrVal': "Green",
-						'bsrRedVal': 0,
-						'bsrYellowVal': 0,
-						'bsrGreenVal': 0,
-						'bsrBlueVal': 0,
-						'nfcVal': 0,
-						'fashionVal': 0,
-						'technologyVal': 0,
-						'cultureVal': 0,
-						'politicsVal': 0,
-						'economicsVal': 0
-					}
-				};
-
-				$(event.target).parent().animate({height: "toggle", opacity: "toggle"}, "slow");
-				$(event.target).parent().next().animate({height: "toggle", opacity: "toggle"}, "slow");
-
+			if (firstnameVar != '' && surnameVar != '' && emailVar != '' && passwordVar != '' && classVar != null && tokenVar != '') {
+				var groupToken = Groups.find({ _id: classVar, token: tokenVar }).fetch();
 				$('.form1 input').removeClass('required');
+
+				if (typeof groupToken !== 'undefined' && groupToken.length > 0) {
+					var emailAlreadyExist = Meteor.users.find({"emails.address": emailVar}, {limit: 1}).count()>0
+					
+					if (emailAlreadyExist === true) {
+						$('#registerEmail').addClass('required');
+						Notifications.error('FutureBase', 'This e=mailaddress is already used.');
+					} else {
+						user = {
+							'email': emailVar,
+							'password': passwordVar,
+							profile: {
+								'name': firstnameVar + " " + surnameVar,
+								'firstname': firstnameVar,
+								'surname': surnameVar,
+								'studentnumber': studentnumberVar,
+								'groupId': classVar,
+								'bsrVal': null,
+								'nfcVal': 0,
+								'fashionVal': 0,
+								'technologyVal': 0,
+								'cultureVal': 0,
+								'politicsVal': 0,
+								'economicsVal': 0
+							}
+						};
+
+						$(event.target).parent().animate({height: "toggle", opacity: "toggle"}, "slow");
+						$(event.target).parent().next().animate({height: "toggle", opacity: "toggle"}, "slow");
+
+						sessionId = MD5(user.email);
+
+						$('.form3 .link').attr("href", "https://smartweb3.smartagent.nl/ennis/surveys/bsrhr/?sessionid=" + sessionId);
+					}
+				} else {
+					$('#registerToken').addClass('required');
+					Notifications.error('FutureBase', 'The token does not match the group.');
+				}
 			} else {
 				if (firstnameVar == '') {
 					$('#registerFirstname').addClass('required');
+				} else {
+					$('#registerFirstname').removeClass('required');
 				}
 				if (surnameVar == '') {
 					$('#registerSurname').addClass('required');
+				} else {
+					$('#registerSurname').removeClass('required');
 				}
 				if (emailVar == '') {
 					$('#registerEmail').addClass('required');
+				} else {
+					$('#registerEmail').removeClass('required');
 				}
 				if (passwordVar == '') {
 					$('#registerPassword').addClass('required');
+				} else {
+					$('#registerPassword').removeClass('required');
 				}
-				Bert.alert({
-					message: 'Vul alle velden in.',
-					type: 'danger',
-					style: 'growl-top-right',
-					icon: 'fa-close'
-				});
+				if (tokenVar == '') {
+					$('#registerToken').addClass('required');
+				} else {
+					$('#registerToken').removeClass('required');
+				}
+				Notifications.error('FutureBase', 'Vul alle velden in.');
 			}
 		},
 		'click .form2 .advance': function(event){
@@ -221,106 +244,233 @@ if (Meteor.isClient) {
 			}
 
 			if (counting <= 2) {
-				user.profile.fashionVal = fashionVar;
-				user.profile.technologyVal = technologyVar;
-				user.profile.cultureVal = cultureVar;
-				user.profile.politicsVal = politicsVar;
-				user.profile.fashionVal = economicsVar;
+				user.profile.fashionVal = parseInt(fashionVar);
+				user.profile.technologyVal = parseInt(technologyVar);
+				user.profile.cultureVal = parseInt(cultureVar);
+				user.profile.politicsVal = parseInt(politicsVar);
+				user.profile.economicsVal = parseInt(economicsVar);
 
 				$(event.target).parent().animate({height: "toggle", opacity: "toggle"}, "slow");
 				$(event.target).parent().next().animate({height: "toggle", opacity: "toggle"}, "slow");
 
 				$('.form2 input').removeClass('required');
 			} else {
-				Bert.alert({
-					message: 'Vul de velden naar eerlijkheid in',
-					type: 'danger',
-					style: 'growl-top-right',
-					icon: 'fa-close'
-				});
+				Notifications.error('FutureBase', 'Would you like to be more open about your interests?');
 			}
 		},
 		'click .form3 .advance': function(event){
 			event.preventDefault();
 
+			Meteor.call("checkSamr", function(error, results) {
+				var founded = false,
+					samrData = null;
+
+				for (var i = 0; i < results.data.length; i++) {
+					if (results.data[i].ID == sessionId) {
+						founded = true;
+						samrData = results.data[i];
+					}
+				}
+
+				if (founded != false) {
+					switch(samrData.wereld) {
+						case 'rood':
+							user.profile.bsrVal = 'Red';
+						break;
+
+						case 'geel':
+							user.profile.bsrVal = 'Yellow';
+						break;
+						
+						case 'blauw':
+							user.profile.bsrVal = 'Blue';
+						break;
+						
+						case 'groen':
+							user.profile.bsrVal = 'Green';
+						break;
+					}
+				} else {
+					var colors = ['Red', 'Yellow', 'Blue', 'Green']
+					user.profile.bsrVal = colors[Math.floor(Math.random() * colors.length)];
+				}
+			});
+
 			$(event.target).parent().animate({height: "toggle", opacity: "toggle"}, "slow");
 			$(event.target).parent().next().animate({height: "toggle", opacity: "toggle"}, "slow");
 
-			$('.form2 input').removeClass('required');
+			$('.form3 input').removeClass('required');
+		},
+		'click .form3 .link': function(event){
+
+			$('.form3 .link').delay(800).addClass('clicked');
 		},
 		'submit .register-form.form4': function(event){
 			event.preventDefault();
+			var totalnfc = 0;
 
-			var colorArray = [
-				"Rood",
-				"Geel",
-				"Groen",
-				"Blauw"
-			]
+			$('.nfcQuestion input').each( function() {
+				var val = parseInt($(this).val());
 
-			var bsrColor = colorArray[Math.floor(Math.random()*colorArray.length)];
-			var nfcValue = Math.floor(Math.random() * 60);
+				switch($(this).attr('id')) {
+					case "registerNFC3":
+						if ($(this).val() == "1") {
+							val = 5;
+						}
+						if ($(this).val() == "2") {
+							val = 4;
+						}
+						if ($(this).val() == "4") {
+							val = 2;
+						}
+						if ($(this).val() == "5") {
+							val = 1;
+						}
+					break;
 
-			$('.nfcQuestion select').each( function() {
-				console.log($(this).val());
+					case "registerNFC4":
+						if ($(this).val() == "1") {
+							val = 5;
+						}
+						if ($(this).val() == "2") {
+							val = 4;
+						}
+						if ($(this).val() == "4") {
+							val = 2;
+						}
+						if ($(this).val() == "5") {
+							val = 1;
+						}
+					break;
+					
+					case "registerNFC6":
+						if ($(this).val() == "1") {
+							val = 5;
+						}
+						if ($(this).val() == "2") {
+							val = 4;
+						}
+						if ($(this).val() == "4") {
+							val = 2;
+						}
+						if ($(this).val() == "5") {
+							val = 1;
+						}
+					break;
+					
+					case "registerNFC7":
+						if ($(this).val() == "1") {
+							val = 5;
+						}
+						if ($(this).val() == "2") {
+							val = 4;
+						}
+						if ($(this).val() == "4") {
+							val = 2;
+						}
+						if ($(this).val() == "5") {
+							val = 1;
+						}
+					break;
+					
+					case "registerNFC8":
+						if ($(this).val() == "1") {
+							val = 5;
+						}
+						if ($(this).val() == "2") {
+							val = 4;
+						}
+						if ($(this).val() == "4") {
+							val = 2;
+						}
+						if ($(this).val() == "5") {
+							val = 1;
+						}
+					break;
+					
+					case "registerNFC11":
+						if ($(this).val() == "1") {
+							val = 5;
+						}
+						if ($(this).val() == "2") {
+							val = 4;
+						}
+						if ($(this).val() == "4") {
+							val = 2;
+						}
+						if ($(this).val() == "5") {
+							val = 1;
+						}
+					break;
+					
+					case "registerNFC14":
+						if ($(this).val() == "1") {
+							val = 5;
+						}
+						if ($(this).val() == "2") {
+							val = 4;
+						}
+						if ($(this).val() == "4") {
+							val = 2;
+						}
+						if ($(this).val() == "5") {
+							val = 1;
+						}
+					break;
+				}
+
+				totalnfc += val;
 			});
 
+			user.profile.nfcVal = totalnfc;
 
-			console.log(user);
+			Meteor.call('createANewUser', user, function(err) {
+				if (err) {
+					console.log('createANewUser: ', err);
+				} else {
+					Meteor.loginWithPassword(user.email, user.password, function(err) {
+						if(err) {
+							console.log('Login: ', err);
+						} else {
+							Session.set('LoggedIn', true);
+							Notifications.success("Welcome: " + Meteor.user().profile.name, 'You just entered the FutureBase.');
+							Meteor.call('addNewRoleToUser', Meteor.userId(), 'student', function(err) {
+								if (err) {
+									console.log(err);
+								}
+							});
+							if (Meteor.user().emails[0].address == 'nathanvh95@gmail.com') {
+								Meteor.call('addNewRoleToUser', Meteor.userId(), 'docent', function(err) {
+									if (err) {
+										console.log(err);
+									}
+								});
+							}
+						}
+					})
+				}
+			});
 
-			// return Meteor.call('createUserWithRole', user, 'student', function(err, userId) {
-			// 	if (err) {
-			// 		//Insertion Error
+			// if (Session.get('LoggedIn')) {
+			// 	console.log('LoggedIn:', Session.get('LoggedIn'));
+			// 	console.log('UserId:', Meteor.userId());
+			// 	Meteor.call('addNewRoleToUser', Meteor.userId(), 'student', function(err) {
+			// 		if (err) {
+
+			// 		}
+			// 	});
+			// }
+
+			// Meteor.loginWithPassword(user.email, user.password, function(err) {
+			// 	if(err) {
+			// 		console.log('Login: ', err);
 			// 	} else {
-			// 		Meteor.loginWithPassword(userId, user.password, function(err, suc) {
-			// 			if (err) {
-			// 				console.log(err);
+			// 		console.log('LoggedIn');
+			// 		Meteor.call('addNewRoleToUser', 'student', Meteor.userId);
 
-			// 				switch(err.reason) {
-			// 					case "Match failed":
-			// 						Bert.alert({
-			// 							message: 'Vul alle velden in',
-			// 							type: 'danger',
-			// 							style: 'growl-top-right',
-			// 							icon: 'fa-close'
-			// 						});
-			// 					break;
-
-			// 					case "User not found":
-			// 						Bert.alert({
-			// 							message: 'E-mailadres bestaat niet',
-			// 							type: 'danger',
-			// 							style: 'growl-top-right',
-			// 							icon: 'fa-close'
-			// 						});
-			// 					break;
-
-			// 					case "Incorrect password":
-			// 						Bert.alert({
-			// 							message: 'Wachtwoord is incorrect',
-			// 							type: 'danger',
-			// 							style: 'growl-top-right',
-			// 							icon: 'fa-close'
-			// 						});
-			// 					break;
-			// 				}
-			// 			} else {
-			// 				var name = "Welkom: " + Meteor.user().profile.name;
-			// 				console.log(name);
-
-			// 				Router.go('/');
-
-			// 				Bert.alert({
-			// 					title: name,
-			// 					message: 'Je bent ingelogd!',
-			// 					type: 'success',
-			// 					style: 'growl-top-right',
-			// 					icon: 'fa-check'
-			// 				});
-			// 			}
-			// 		});
+			// 		// 	Notifications.success("Welkom: " + Meteor.user().profile.name, 'Je bent ingelogd!');
 			// 	}
-			// });
+			// })
 		},
 		'click .return': function(event){
 			event.preventDefault();
@@ -354,6 +504,38 @@ if (Meteor.isClient) {
 			$(event.target)
 				.prev()
 				.html(value);
+		},
+		'change .nfcQuestion input': function(event){
+			event.preventDefault();
+
+			var value = $(event.target).val();
+			var text = "Eens noch oneens";
+
+			switch(value) {
+				case "1":
+					text = "Zeer oneens";
+				break;
+
+				case "2":
+					text = "Oneens";
+				break;
+
+				case "3":
+					text = "Eens noch oneens";
+				break;
+
+				case "4":
+					text = "Eens";
+				break;
+
+				case "5":
+					text = "Zeer eens";
+				break;
+			}
+
+			$(event.target)
+				.prev()
+				.html(text);
 		}
 	});
 }
@@ -369,3 +551,208 @@ jQuery.fn.shuffle = function () {
 	}
 	return this;
 };
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+var MD5 = function (string) {
+
+   function RotateLeft(lValue, iShiftBits) {
+           return (lValue<<iShiftBits) | (lValue>>>(32-iShiftBits));
+   }
+
+   function AddUnsigned(lX,lY) {
+           var lX4,lY4,lX8,lY8,lResult;
+           lX8 = (lX & 0x80000000);
+           lY8 = (lY & 0x80000000);
+           lX4 = (lX & 0x40000000);
+           lY4 = (lY & 0x40000000);
+           lResult = (lX & 0x3FFFFFFF)+(lY & 0x3FFFFFFF);
+           if (lX4 & lY4) {
+                   return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
+           }
+           if (lX4 | lY4) {
+                   if (lResult & 0x40000000) {
+                           return (lResult ^ 0xC0000000 ^ lX8 ^ lY8);
+                   } else {
+                           return (lResult ^ 0x40000000 ^ lX8 ^ lY8);
+                   }
+           } else {
+                   return (lResult ^ lX8 ^ lY8);
+           }
+   }
+
+   function F(x,y,z) { return (x & y) | ((~x) & z); }
+   function G(x,y,z) { return (x & z) | (y & (~z)); }
+   function H(x,y,z) { return (x ^ y ^ z); }
+   function I(x,y,z) { return (y ^ (x | (~z))); }
+
+   function FF(a,b,c,d,x,s,ac) {
+           a = AddUnsigned(a, AddUnsigned(AddUnsigned(F(b, c, d), x), ac));
+           return AddUnsigned(RotateLeft(a, s), b);
+   };
+
+   function GG(a,b,c,d,x,s,ac) {
+           a = AddUnsigned(a, AddUnsigned(AddUnsigned(G(b, c, d), x), ac));
+           return AddUnsigned(RotateLeft(a, s), b);
+   };
+
+   function HH(a,b,c,d,x,s,ac) {
+           a = AddUnsigned(a, AddUnsigned(AddUnsigned(H(b, c, d), x), ac));
+           return AddUnsigned(RotateLeft(a, s), b);
+   };
+
+   function II(a,b,c,d,x,s,ac) {
+           a = AddUnsigned(a, AddUnsigned(AddUnsigned(I(b, c, d), x), ac));
+           return AddUnsigned(RotateLeft(a, s), b);
+   };
+
+   function ConvertToWordArray(string) {
+           var lWordCount;
+           var lMessageLength = string.length;
+           var lNumberOfWords_temp1=lMessageLength + 8;
+           var lNumberOfWords_temp2=(lNumberOfWords_temp1-(lNumberOfWords_temp1 % 64))/64;
+           var lNumberOfWords = (lNumberOfWords_temp2+1)*16;
+           var lWordArray=Array(lNumberOfWords-1);
+           var lBytePosition = 0;
+           var lByteCount = 0;
+           while ( lByteCount < lMessageLength ) {
+                   lWordCount = (lByteCount-(lByteCount % 4))/4;
+                   lBytePosition = (lByteCount % 4)*8;
+                   lWordArray[lWordCount] = (lWordArray[lWordCount] | (string.charCodeAt(lByteCount)<<lBytePosition));
+                   lByteCount++;
+           }
+           lWordCount = (lByteCount-(lByteCount % 4))/4;
+           lBytePosition = (lByteCount % 4)*8;
+           lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80<<lBytePosition);
+           lWordArray[lNumberOfWords-2] = lMessageLength<<3;
+           lWordArray[lNumberOfWords-1] = lMessageLength>>>29;
+           return lWordArray;
+   };
+
+   function WordToHex(lValue) {
+           var WordToHexValue="",WordToHexValue_temp="",lByte,lCount;
+           for (lCount = 0;lCount<=3;lCount++) {
+                   lByte = (lValue>>>(lCount*8)) & 255;
+                   WordToHexValue_temp = "0" + lByte.toString(16);
+                   WordToHexValue = WordToHexValue + WordToHexValue_temp.substr(WordToHexValue_temp.length-2,2);
+           }
+           return WordToHexValue;
+   };
+
+   function Utf8Encode(string) {
+           string = string.replace(/\r\n/g,"\n");
+           var utftext = "";
+
+           for (var n = 0; n < string.length; n++) {
+
+                   var c = string.charCodeAt(n);
+
+                   if (c < 128) {
+                           utftext += String.fromCharCode(c);
+                   }
+                   else if((c > 127) && (c < 2048)) {
+                           utftext += String.fromCharCode((c >> 6) | 192);
+                           utftext += String.fromCharCode((c & 63) | 128);
+                   }
+                   else {
+                           utftext += String.fromCharCode((c >> 12) | 224);
+                           utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                           utftext += String.fromCharCode((c & 63) | 128);
+                   }
+
+           }
+
+           return utftext;
+   };
+
+   var x=Array();
+   var k,AA,BB,CC,DD,a,b,c,d;
+   var S11=7, S12=12, S13=17, S14=22;
+   var S21=5, S22=9 , S23=14, S24=20;
+   var S31=4, S32=11, S33=16, S34=23;
+   var S41=6, S42=10, S43=15, S44=21;
+
+   string = Utf8Encode(string);
+
+   x = ConvertToWordArray(string);
+
+   a = 0x67452301; b = 0xEFCDAB89; c = 0x98BADCFE; d = 0x10325476;
+
+   for (k=0;k<x.length;k+=16) {
+           AA=a; BB=b; CC=c; DD=d;
+           a=FF(a,b,c,d,x[k+0], S11,0xD76AA478);
+           d=FF(d,a,b,c,x[k+1], S12,0xE8C7B756);
+           c=FF(c,d,a,b,x[k+2], S13,0x242070DB);
+           b=FF(b,c,d,a,x[k+3], S14,0xC1BDCEEE);
+           a=FF(a,b,c,d,x[k+4], S11,0xF57C0FAF);
+           d=FF(d,a,b,c,x[k+5], S12,0x4787C62A);
+           c=FF(c,d,a,b,x[k+6], S13,0xA8304613);
+           b=FF(b,c,d,a,x[k+7], S14,0xFD469501);
+           a=FF(a,b,c,d,x[k+8], S11,0x698098D8);
+           d=FF(d,a,b,c,x[k+9], S12,0x8B44F7AF);
+           c=FF(c,d,a,b,x[k+10],S13,0xFFFF5BB1);
+           b=FF(b,c,d,a,x[k+11],S14,0x895CD7BE);
+           a=FF(a,b,c,d,x[k+12],S11,0x6B901122);
+           d=FF(d,a,b,c,x[k+13],S12,0xFD987193);
+           c=FF(c,d,a,b,x[k+14],S13,0xA679438E);
+           b=FF(b,c,d,a,x[k+15],S14,0x49B40821);
+           a=GG(a,b,c,d,x[k+1], S21,0xF61E2562);
+           d=GG(d,a,b,c,x[k+6], S22,0xC040B340);
+           c=GG(c,d,a,b,x[k+11],S23,0x265E5A51);
+           b=GG(b,c,d,a,x[k+0], S24,0xE9B6C7AA);
+           a=GG(a,b,c,d,x[k+5], S21,0xD62F105D);
+           d=GG(d,a,b,c,x[k+10],S22,0x2441453);
+           c=GG(c,d,a,b,x[k+15],S23,0xD8A1E681);
+           b=GG(b,c,d,a,x[k+4], S24,0xE7D3FBC8);
+           a=GG(a,b,c,d,x[k+9], S21,0x21E1CDE6);
+           d=GG(d,a,b,c,x[k+14],S22,0xC33707D6);
+           c=GG(c,d,a,b,x[k+3], S23,0xF4D50D87);
+           b=GG(b,c,d,a,x[k+8], S24,0x455A14ED);
+           a=GG(a,b,c,d,x[k+13],S21,0xA9E3E905);
+           d=GG(d,a,b,c,x[k+2], S22,0xFCEFA3F8);
+           c=GG(c,d,a,b,x[k+7], S23,0x676F02D9);
+           b=GG(b,c,d,a,x[k+12],S24,0x8D2A4C8A);
+           a=HH(a,b,c,d,x[k+5], S31,0xFFFA3942);
+           d=HH(d,a,b,c,x[k+8], S32,0x8771F681);
+           c=HH(c,d,a,b,x[k+11],S33,0x6D9D6122);
+           b=HH(b,c,d,a,x[k+14],S34,0xFDE5380C);
+           a=HH(a,b,c,d,x[k+1], S31,0xA4BEEA44);
+           d=HH(d,a,b,c,x[k+4], S32,0x4BDECFA9);
+           c=HH(c,d,a,b,x[k+7], S33,0xF6BB4B60);
+           b=HH(b,c,d,a,x[k+10],S34,0xBEBFBC70);
+           a=HH(a,b,c,d,x[k+13],S31,0x289B7EC6);
+           d=HH(d,a,b,c,x[k+0], S32,0xEAA127FA);
+           c=HH(c,d,a,b,x[k+3], S33,0xD4EF3085);
+           b=HH(b,c,d,a,x[k+6], S34,0x4881D05);
+           a=HH(a,b,c,d,x[k+9], S31,0xD9D4D039);
+           d=HH(d,a,b,c,x[k+12],S32,0xE6DB99E5);
+           c=HH(c,d,a,b,x[k+15],S33,0x1FA27CF8);
+           b=HH(b,c,d,a,x[k+2], S34,0xC4AC5665);
+           a=II(a,b,c,d,x[k+0], S41,0xF4292244);
+           d=II(d,a,b,c,x[k+7], S42,0x432AFF97);
+           c=II(c,d,a,b,x[k+14],S43,0xAB9423A7);
+           b=II(b,c,d,a,x[k+5], S44,0xFC93A039);
+           a=II(a,b,c,d,x[k+12],S41,0x655B59C3);
+           d=II(d,a,b,c,x[k+3], S42,0x8F0CCC92);
+           c=II(c,d,a,b,x[k+10],S43,0xFFEFF47D);
+           b=II(b,c,d,a,x[k+1], S44,0x85845DD1);
+           a=II(a,b,c,d,x[k+8], S41,0x6FA87E4F);
+           d=II(d,a,b,c,x[k+15],S42,0xFE2CE6E0);
+           c=II(c,d,a,b,x[k+6], S43,0xA3014314);
+           b=II(b,c,d,a,x[k+13],S44,0x4E0811A1);
+           a=II(a,b,c,d,x[k+4], S41,0xF7537E82);
+           d=II(d,a,b,c,x[k+11],S42,0xBD3AF235);
+           c=II(c,d,a,b,x[k+2], S43,0x2AD7D2BB);
+           b=II(b,c,d,a,x[k+9], S44,0xEB86D391);
+           a=AddUnsigned(a,AA);
+           b=AddUnsigned(b,BB);
+           c=AddUnsigned(c,CC);
+           d=AddUnsigned(d,DD);
+   		}
+
+   	var temp = WordToHex(a)+WordToHex(b)+WordToHex(c)+WordToHex(d);
+
+   	return temp.toLowerCase();
+}

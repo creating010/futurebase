@@ -1,20 +1,29 @@
 <head>
-	<title>TrendTool</title>
+	<title>FutureBase</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
+	<link rel="stylesheet" href="/assets/css/normalize.css"/>
+	<link rel="stylesheet" href="/assets/css/responsive.css"/>
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
-	{{#if currentUser}}
-	
+	{{#if adminPage}}
+		
 	{{else}}
-	{{> registerLogin}}
+		{{#if currentUser}}
+			
+		{{else}}
+			{{> registerLogin}}
+		{{/if}}
+
+		{{> header}}
+		{{> notifications}}
 	{{/if}}
 
-	{{> header}}
+	<!-- {{> footer}} -->
 </body>
 
 <template name="header">
@@ -23,7 +32,7 @@
 			<div class="row">
 				<div class="col col-xs-6 col-md-2 col-md-offset-1">
 					<div class="name">
-						<a href="{{ pathFor 'home' }}"><h2>TrendTool</h2></a>
+						<a href="/"><h2>FutureBase</h2></a>
 					</div>
 				</div>
 				<div class="col col-md-3 col-md-offset-6">
@@ -35,9 +44,9 @@
 							<li class="user loggedIn">
 								<a href="{{ pathFor 'profile' }}" class=""><i class="fa fa-user"></i></a>
 								<ul class="dropdownMenu">
-									<li><a href="#" class="logout">Uitloggen</a></li>
-									<li><a href="#" class="logout">Uitloggen</a></li>
-									<li><a href="#" class="logout">Uitloggen</a></li>
+									<li><a href="#" class="logout">Logout</a></li>
+									<!-- <li><a href="#" class="logout">Uitloggen</a></li>
+									<li><a href="#" class="logout">Uitloggen</a></li> -->
 								</ul>
 							</li>
 							{{else}}
@@ -82,41 +91,52 @@
 			</div>
 			<div class="form">
 				<form class="register-form form1">
-					<h3>Registreren</h3>
-					<input type="text" placeholder="Voornaam" id="registerFirstname" required/>
-					<input type="text" placeholder="Achternaam" id="registerSurname" required/>
-					<input type="email" placeholder="E-mailadres" id="registerEmail" required/>
-					<input type="password" placeholder="Wachtwoord" id="registerPassword" required/>
-					<!-- <button type="submit" value="Register" class="register">Registreren</button> -->
-					<input type="submit" value="Verder" id="registerSubmit1" class="advance">
-					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
+					<h3>Register</h3>
+					<p class="infoText">To begin, we need some data of you.</p>
+
+
+					<input type="text" placeholder="Firstname" id="registerFirstname" required/>
+					<input type="text" placeholder="Surname" id="registerSurname" required/>
+					<input type="email" placeholder="E-mailaddress" id="registerEmail" required/>
+					<input type="password" placeholder="Password" id="registerPassword" required/>
+					<select id="registerClass" required>
+						<option value="None" disabled selected hidden>Group</option>
+						{{#each getGroups}}
+							<option value="{{this.id}}">{{this.name}}</option>
+						{{/each}}
+					</select>
+					<input type="text" placeholder="Groupstoken" id="registerToken" required/>
+					<input type="text" placeholder="Studentnumber" id="registerStudentnumber" required/>
+					<input type="submit" value="Next" id="registerSubmit1" class="advance">
+					<p class="message">Already have an account? <a href="#">Login</a></p>
 				</form>
 				<form class="register-form form2">
 					<h3>Registreren</h3>
+					<p class="infoText">Where do you interested in? Indicate whether you find the topic interesting (5) or not (1).</p>
 
 					<div class="intrests">
 						<div class="interst">
-							<p>Mode:</p>
+							<p>Fashion & Lifestyle:</p>
 							<p class="right">3</p>
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerFashion">
 						</div>
 						<div class="interst">
-							<p>Cultuur:</p>
+							<p>Art & Culture:</p>
 							<p class="right">3</p>
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerCulture">
 						</div>
 						<div class="interst">
-							<p>Technologie:</p>
+							<p>Gadgets & Technology:</p>
 							<p class="right">3</p>
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerTechnology">
 						</div>
 						<div class="interst">
-							<p>Politiek:</p>
+							<p>Politics & Democracy:</p>
 							<p class="right">3</p>
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerPolitics">
 						</div>
 						<div class="interst">
-							<p>Economie:</p>
+							<p>Economics & Business Models:</p>
 							<p class="right">3</p>
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerEconomics">
 						</div>
@@ -129,198 +149,112 @@
 						</datalist>
 					</div>
 
-					<input type="submit" value="Terug" class="return">
-					<input type="submit" value="Verder" id="registerSubmit2" class="advance">
-					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
+					<input type="submit" value="Back" class="return">
+					<input type="submit" value="Next" id="registerSubmit2" class="advance">
+					<p class="message">Already have an account? <a href="#">Login</a></p>
 				</form>
 				<form class="register-form form3">
-					<h3>Registreren</h3>
-					<input type="text" placeholder="BSR model" id="test2"/>
-					<input type="submit" value="Terug" class="return">
-					<input type="submit" value="Verder" id="registerSubmit3" class="advance">
+					<h3>Register</h3>
+					<p class="infoText">(If you can't understand dutch, skip this test) We willen je vragen mee te doen aan de BSR test. Deze test geeft een idee hoe jij naar ‘veranderen’ kijkt. Het verkent de waarden motieven en behoeften. Hiermee maken we de FutureBase rijker en heb jij straks meer aan de verzameling signalen.</p>
+
+					<a href="https://smartweb3.smartagent.nl/ennis/surveys/bsrhr/?sessionid=" target="_blank" class="link">Link</a>
+					<input type="submit" value="Back" class="return">
+					<input type="submit" value="Next" id="registerSubmit3" class="advance">
 					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
 				</form>
 				<form class="register-form form4">
-					<h3>Registreren</h3>
+					<h3>Register</h3>
+					<p class="infoText">The final test, here we test the extent to which you're curious. Please always indicate if you agree or disagree with the statement.</p>
+
 					<div class="nfcTest">
 						<div class="nfcQuestion">
-							<p>Als ik moet kiezen heb ik liever een ingewikkeld dan een simpel probleem.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p>Als ik moet kiezen heb ik liever een complicated problem t dan een simpel probleem.</p>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC1">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik ben graag verantwoordelijk voor een situatie waarin veel nagedacht moet worden.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC2">
 						</div>
 						<div class="nfcQuestion">
-							<p>Denken is niet precies mijn idee van plezier hebben.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p>TDenken is niet precies mijn idee van plezier hebben.</p>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC3">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik doe liever iets waarbij weinig nagedacht hoeft te worden dan iets waarbij mijn denkvermogen zeker op de proef wordt gesteld.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC4">
 						</div>
 						<div class="nfcQuestion">
 							<p>Iets langdurig en precies afwegen geeft mij voldoening.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC5">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik denk alleen zoveel als nodig is.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC6">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik denk liever over kleine dagelijkse dan over lange termijn projecten na.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC7">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik hou van taken waarbij weinig nagedacht hoeft te worden wanneer ik ze eenmaal geleerd heb.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC8">
 						</div>
 						<div class="nfcQuestion">
 							<p>Het idee om op mijn verstand te vertrouwen vind ik aantrekkelijk.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC9">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik geniet echt van een taak waarin men met nieuwe oplossingen voor problemen moet komen.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC10">
 						</div>
 						<div class="nfcQuestion">
 							<p>Nieuwe manieren leren om te denken trekt mij niet bijzonder aan.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC11">
 						</div>
 						<div class="nfcQuestion">
 							<p>Het idee om abstract te denken vind ik aantrekkelijk.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC12">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik heb liever een taak die intellectueel, moeilijk en belangrijk is, dan een taak die enigszins belangrijk is maar waarbij je niet veel hoeft na te denken.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC13">
 						</div>
 						<div class="nfcQuestion">
 							<p>Ik vind het voldoende wanneer iets blijkt te werken: hoe of waarom het precies werkt interesseert mij niet.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC14">
 						</div>
 						<div class="nfcQuestion">
 							<p>Gewoonlijk maak ik zelfs uitgebreid afwegingen over zaken die niet persoonlijk op mijzelf betrekking hebben.</p>
-							<select required>
-								<option value="" disabled selected hidden>Maak een keuze</option>
-								<option value="1">Zeer oneens</option>
-								<option value="2">Oneens</option>
-								<option value="3">Eens noch oneens</option>
-								<option value="4">Eens</option>
-								<option value="5">Zeer eens</option>
-							</select>
+							<p class="right">Eens noch oneens</p>
+							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC15">
 						</div>
 					</div>
-					<input type="submit" value="Terug" class="return">
-					<input type="submit" value="Registeren" id="registerSubmit4">
-					<p class="message">Al geregistreerd? <a href="#">Inloggen</a></p>
+					<input type="submit" value="Back" class="return">
+					<input type="submit" value="Register" id="registerSubmit4" class="last">
+					<p class="message">Already have an account? <a href="#">Login</a></p>
 				</form>
 
 				<form class="login-form">
-					<h3>Inloggen</h3>
-					<input type="text" placeholder="E-mail" id="loginEmail"/>
-					<input type="password" placeholder="Wachtwoord" id="loginPassword"/>
+					<h3>Login</h3>
+					<input type="text" placeholder="E-mailaddress" id="loginEmail"/>
+					<input type="password" placeholder="Password" id="loginPassword"/>
 					<!-- <button class="login">Inloggen</button> -->
-					<input type="submit" value="Inloggen" id="loginSubmit">
-					<p class="message">Nog niet geregistreerd? <a href="#">Maak een account</a></p>
+					<input type="submit" value="Login" id="loginSubmit">
+					<p class="message">Don't have a account? <a href="#">Make a account</a></p>
 				</form>
 			</div>
 		</div>
@@ -333,4 +267,10 @@
 			{{> spinner}}
 		</div>
 	</div>
+</template>
+
+<template name="footer">
+	<footer>
+		FutureBase is een initiatief van Creating 010; een onderdeel van programma's rond trendonderzoek.
+	</footer>
 </template>

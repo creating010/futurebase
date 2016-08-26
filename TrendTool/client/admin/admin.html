@@ -1,49 +1,290 @@
 <template name="admin">
-	<div class="section">
-		<div class="container">
-			<div class="row">
-				<p>ADMIN</p>
-				<select name="usersSelection" class="usersSelection">
-					{{#each listGroups}}
-						<option value="{{_id}}">{{projectName}}</option>
-					{{/each}}
-				</select>
-				<table>
-					<tr>
-						<th>Index</th>
-						<th>Naam</th>
-						<th>Foto's</th>
-					</tr>
-					{{#each listUsers}}
-						<tr>
-							<td>{{offset @index}}</td>
-							<td>{{profile.name}}</td>
-							<td>{{userImageCount _id}}</td>
-						</tr>
-					{{/each}}
-				</table>
-				<!-- <tr>
-					<th scope="row">{{@index}}</th>
-					<td><input type="text" class="form-control input-sm" id="usernameInput-{{_id}}" placeholder="{{profile.name}}" value={{profile.name}} disabled></td>
-					<td><input type="text" class="form-control input-sm" id="emailInput-{{_id}}" placeholder="{{emails.[0].address}}" value={{emails.[0].address}} disabled></td>
-					<td><span class="badge">{{userImageCount _id}}</span></td>
-					<td><input type="number" class="form-control input-sm" id="fashionInput-{{_id}}" placeholder="{{profile.fashionVal}}" min="1" max="5" size="1" value={{profile.fashionVal}}></td>
-					<td><input type="number" class="form-control input-sm" id="techInput-{{_id}}" placeholder="{{profile.technologyVal}}" min="1" max="5" size="1" value={{profile.technologyVal}}></td>
-					<td><input type="number" class="form-control input-sm" id="cultureInput-{{_id}}" placeholder="{{profile.cultureVal}}" min="1" max="5" size="1" value={{profile.cultureVal}}></td>
-					<td><input type="number" class="form-control input-sm" id="politicsInput-{{_id}}" placeholder="{{profile.politicsVal}}" min="1" max="5" size="1" value={{profile.politicsVal}}></td>
-					<td><input type="number" class="form-control input-sm" id="economyInput-{{_id}}" placeholder="{{profile.economicsVal}}" min="1" max="5" size="1" value={{profile.economicsVal}}></td>
-					<td>
-						<select class="form-control input-sm" id="bsr-{{_id}}">
-							<option value="{{profile.bsrVal}}">{{profile.bsrVal}}</option>
-							<option value="yellow">yellow</option>
-							<option value="red">red</option>
-							<option value="blue">blue</option>
-							<option value="green">green</option>
-						</select>
-					</td>
-					<td><input type="number" class="form-control input-sm" id="nfc-{{_id}}" placeholder="{{profile.nfcVal}}" min="18" max="90" size="4" value={{profile.nfcVal}}></td>
-					<td><input class="btn btn-default updatebutton" type="submit" value="update"></td>
-				</tr> -->
+	<div class="adminPage">
+		<div class="sidebar">
+			<div class="logo">
+				<a href="/"><i class="fa fa-home"></i></a>
+			</div>
+			<ul>
+				<li class="icon"><a href="{{ pathFor 'admin' }}" class="active"><i class="fa fa-user"></i></a></li>
+				<li class="icon"><a href="{{ pathFor 'admin.groups' }}"><i class="fa fa-group"></i></a></li>
+				<li class="icon"><a href="{{ pathFor 'admin.tags' }}"><i class="fa fa-tags"></i></a></li>
+			</ul>
+		</div>
+		<div class="mainContent">
+			<div class="section">
+				<div class="heading">
+					<h3>Studenten</h3>
+					<div class="searchField">
+						<input type="text" placeholder="Zoeken" id="search"/>
+					</div>
+				</div>
+				<div class="content">
+					<table>
+						<thead>
+							<tr>
+								<th class="filter docent asc">Docent</th>
+								<th class="filter studentNumber asc">Studentennummer</th>
+								<th class="filter studentName asc">Naam</th>
+								<th class="filter studentPhotos asc">Foto's</th>
+								<th class="filter studentGroup asc">Groep</th>
+								<th>Acties</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{#each allUsers.results}}
+								{{#if editing}}
+									<tr>
+										<td><input type="checkbox" name="newDocent" id="newDocent" {{isDocentChecked}}/></td>
+										<td>
+											{{#if profile.studentnumber}}
+												{{profile.studentnumber}}
+											{{/if}}
+										</td>
+										<td>{{profile.name}}</td>
+										<td>{{userImageCount _id}}</td>
+										<td>{{userGroup profile.groupId}}</td>
+										<td>
+											<a href="#" class="check"><i class="fa fa-check"></i></a>
+											<a href="#" class="delete"><i class="fa fa-remove"></i></a>
+										</td>
+									</tr>
+								{{else}}
+									<tr>
+										<td><i class="fa {{isDocent}}"></i></td>
+										<td>
+											{{#if profile.studentnumber}}
+												{{profile.studentnumber}}
+											{{else}}
+												-
+											{{/if}}
+										</td>
+										<td>{{profile.name}}</td>
+										<td>{{userImageCount _id}}</td>
+										<td>{{userGroup profile.groupId}}</td>
+										<td>
+											<a href="#" class="edit"><i class="fa fa-edit"></i></a>
+											<a href="#" class="delete"><i class="fa fa-remove"></i></a>
+										</td>
+									</tr>
+								{{/if}}
+							{{/each}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="groups">
+	{{> makeNewGroup}}
+	<div class="adminPage">
+		<div class="sidebar">
+			<div class="logo">
+				<a href="/"><i class="fa fa-home"></i></a>
+			</div>
+			<ul>
+				<li class="icon"><a href="{{ pathFor 'admin' }}"><i class="fa fa-user"></i></a></li>
+				<li class="icon"><a href="{{ pathFor 'admin.groups' }}" class="active"><i class="fa fa-group"></i></a></li>
+				<li class="icon"><a href="{{ pathFor 'admin.tags' }}"><i class="fa fa-tags"></i></a></li>
+			</ul>
+		</div>
+		<div class="mainContent">
+			<div class="section">
+				<div class="heading">
+					<h3>Groepen</h3>
+					<span class="makeNewGroup"><a href="#"><i class="fa fa-plus"></i></a></span>
+					<div class="searchField">
+						<input type="text" placeholder="Zoeken" id="search"/>
+					</div>
+				</div>
+				<div class="content">
+					<table>
+						<thead>
+							<tr>
+								<th class="filter groupInstituut asc">Instituut</th>
+								<th class="filter groupName asc">Groepnaam</th>
+								<th class="filter groupTitle asc">Werktitel</th>
+								<th>Token</th>
+								<th>Tags</th>
+								<th>Studenten</th>
+								<th>Totaal foto's</th>
+								<th>Actie</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{#each allGroups.results}}
+								{{#if editing}}
+									<tr>
+										<td>
+											<select required id="newInstitute" class="institute">
+												<option value="CMI" {{selectedInstitute "CMI"}}>CMI</option>
+												<option value="COM" {{selectedInstitute "COM"}}>COM</option>
+												<option value="EAS" {{selectedInstitute "EAS"}}>EAS</option>
+												<option value="IBK" {{selectedInstitute "IBK"}}>IBK</option>
+												<option value="IFM" {{selectedInstitute "IFM"}}>IFM</option>
+												<option value="IGO" {{selectedInstitute "IGO"}}>IGO</option>
+												<option value="ISO" {{selectedInstitute "ISO"}}>ISO</option>
+												<option value="IvG" {{selectedInstitute "IvG"}}>IvG</option>
+												<option value="LERO" {{selectedInstitute "LERO"}}>LERO</option>
+												<option value="PABO" {{selectedInstitute "PABO"}}>PABO</option>
+												<option value="RAC" {{selectedInstitute "RAC"}}>RAC</option>
+												<option value="RBS" {{selectedInstitute "RBS"}}>RBS</option>
+												<option value="RMU" {{selectedInstitute "RMU"}}>RMU</option>
+												<option value="WdK" {{selectedInstitute "WdK"}}>WdK</option>
+												<option value="Extern" {{selectedInstitute "Extern"}}>Extern</option>
+											</select>
+										</td>
+										<td><input type="text" id="newName" value="{{name}}" /></td>
+										<td><input type="text" id="newTitle" value="{{title}}" /></td>
+										<td><input type="text" id="newToken" value="{{token}}" /></td>
+										<td><input type="text" class="newTags" value="{{getTagNames tags}}" /></td>
+										<td><p>{{studentCount _id}}</p></td>
+										<td><p>{{groupImageCount _id}}</p></td>
+										<td>
+											<a href="#" class="check"><i class="fa fa-check"></i></a>
+											<a href="#" class="delete"><i class="fa fa-remove"></i></a>
+										</td>
+									</tr>
+								{{else}}
+									<tr>
+										<td><p>{{institute}}</p></td>
+										<td><p>{{name}}</p></td>
+										<td><p>{{title}}</p></td>
+										<td><p>{{token}}</p></td>
+										<td><p>{{getTagNames tags}}</p></td>
+										<td><p>{{studentCount _id}}</p></td>
+										<td><p>{{groupImageCount}}</p></td>
+										<td>
+											<a href="#" class="edit"><i class="fa fa-edit"></i></a>
+											<a href="#" class="delete"><i class="fa fa-remove"></i></a>
+										</td>
+									</tr>
+								{{/if}}
+							{{/each}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="makeNewGroup">
+	<div class="registerLogin">
+		<div class="login-page">
+			<div class="close">
+				<a href="#"><i class="fa fa-close"></i></a>
+			</div>
+			<div class="form">
+				<form class="login-form">
+					<h3>Maak een nieuwe groep</h3>
+					<select required id="groupInstitute" class="institute">
+						<option value="None" disabled selected hidden>Insituut</option>
+						<option value="CMI">CMI</option>
+						<option value="COM">COM</option>
+						<option value="EAS">EAS</option>
+						<option value="IBK">IBK</option>
+						<option value="IFM">IFM</option>
+						<option value="IGO">IGO</option>
+						<option value="ISO">ISO</option>
+						<option value="IvG">IvG</option>
+						<option value="LERO">LERO</option>
+						<option value="PABO">PABO</option>
+						<option value="RAC">RAC</option>
+						<option value="RBS">RBS</option>
+						<option value="RMU">RMU</option>
+						<option value="WdK">WdK</option>
+						<option value="Extern">Extern</option>
+					</select>
+					<input type="text" placeholder="Groepnaam" id="groupName"/>
+					<input type="text" placeholder="Werktitel" id="groupTitle"/>
+					<input type="text" placeholder="Token" id="groupToken"/>
+					<div class="tagsInGroups">
+						<input type="text" placeholder="Typ een tag in" id="groupTags"/>
+					</div>
+					<!-- <button class="login">Aanmaken</button> -->
+					<input type="submit" value="Aanmaken" id="groupSubmit">
+				</form>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="tags">
+	{{> makeNewTag}}
+	<div class="adminPage">
+		<div class="sidebar">
+			<div class="logo">
+				<a href="/"><i class="fa fa-home"></i></a>
+			</div>
+			<ul>
+				<li class="icon"><a href="{{ pathFor 'admin' }}"><i class="fa fa-user"></i></a></li>
+				<li class="icon"><a href="{{ pathFor 'admin.groups' }}"><i class="fa fa-group"></i></a></li>
+				<li class="icon"><a href="{{ pathFor 'admin.tags' }}" class="active"><i class="fa fa-tags"></i></a></li>
+			</ul>
+		</div>
+		<div class="mainContent">
+			<div class="section">
+				<div class="heading">
+					<h3>Tags</h3>
+					<span class="makeNewTag"><a href="#"><i class="fa fa-plus"></i></a></span>
+					<div class="searchField">
+						<input type="text" placeholder="Zoeken" id="search"/>
+					</div>
+				</div>
+				<div class="content">
+					<table>
+						<thead>
+							<tr>
+								<th class="filter tagName asc">Tagnaam</th>
+								<th>Groepen</th>
+								<th>Actie</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{#each allTags.results}}
+								{{#if editing}}
+									<tr>
+										<td><input type="text" id="newName" value="{{name}}" /></td>
+										<td><p>{{groupsUseTag _id}}</p></td>
+										<td>
+											<a href="#" class="check"><i class="fa fa-check"></i></a>
+											<a href="#" class="delete"><i class="fa fa-remove"></i></a>
+										</td>
+									</tr>
+								{{else}}
+									<tr>
+										<td><p>{{name}}</p></td>
+										<td><p>{{groupsUseTag _id}}</p></td>
+										<td>
+											<a href="#" class="edit"><i class="fa fa-edit"></i></a>
+											<a href="#" class="delete"><i class="fa fa-remove"></i></a>
+										</td>
+									</tr>
+								{{/if}}
+							{{/each}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="makeNewTag">
+	<div class="registerLogin">
+		<div class="login-page">
+			<div class="close">
+				<a href="#"><i class="fa fa-close"></i></a>
+			</div>
+			<div class="form">
+				<form class="login-form">
+					<h3>Maak een nieuwe tag</h3>
+					<input type="text" placeholder="Tagnaam" id="tagName" autofocus />
+					<!-- <button class="login">Aanmaken</button> -->
+					<input type="submit" value="Aanmaken" id="tagSubmit">
+				</form>
 			</div>
 		</div>
 	</div>

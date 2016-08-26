@@ -1,5 +1,5 @@
 {
-  "name": "TrendTool",
+  "name": "FutureBase",
   "private": true,
   "scripts": {
     "start": "meteor run"

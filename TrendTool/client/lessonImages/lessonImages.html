@@ -1,123 +1,30 @@
 <template name="lessonImages">
-  {{> topBar}}
-  {{> listImages}}
-</template>
-
-<template name="topBar">
-  <div class="top-bar">
-    <div class="container">
-      <div class="row">
-        {{> topBarUpload}}
-        <div class="topBar">
-          {{> dropdown}}
-          {{#if currentUser}}
-            <div class="col col-xs-6 col-md-4 col-md-offset-6">
-              <div class="create-new makeNew">
-                <a class="btn btn-square" href="#">Upload new signal</a>
-              </div>
-            </div>
-          {{/if}}
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<template name="topBarUpload">
-  <div class="topBarUpload">
-    <div class="col col-md-3">
-      <div class="dropzone" id="dropzone">
-        <div class="dropzoneInner">
-          <i class="fa fa-upload"></i>
-          <p>Sleep de afbeelding hier naartoe</p>
-        </div>
-      </div>
-    </div>
-    <div class="col col-md-4">
-      <div class="tags">
-        <h3>Selecteer de tags</h3>
-        <div class="tagsSelector">
-          <input type="text" id="tagSelection" name="tagSelection" placeholder="Typ een tag in">
-          <!-- <ul>
-            {{#each allTags}}
-              <li>{{name}}</li>
-            {{/each}}
-          </ul> -->
-        </div>
-      </div>
-      <div class="location">
-        <h3>Locatie van het signaal</h3>
-        <div class="locationSelector">
-          <input id="locationSelection" type="text" placeholder="Typ een adres in" />
-          <span class="help-block small" name="formatted_address" id="formatted_address"></span>
-          <span class="help-block small" name="location" id="gps"></span>
-        </div>
-      </div>
-    </div>
-    <div class="col col-md-4 col-md-offset-1">
-      <div class="close">
-        <a href="#"><i class="fa fa-close"></i></a>
-      </div>
-      <div class="description">
-        <h3>Beschrijving</h3>
-        <div class="descriptionText">
-          <textarea rows="3" id="descriptionText" name="descriptionText" placeholder="Typ hier een beschrijving van het signaal in"></textarea>
-        </div>
-      </div>
-      <div class="uploadImage">
-        <div class="create-new">
-          <a class="btn btn-square submitImage" href="#">Upload new signal</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- <form id="uploadForm" onsubmit="return false;" method="post">
-      <div class="form-group">
-        <label for="uploadFile" class="uploadFileLabel"></label>
-        <input type="file" accept="image" id="uploadFile" required/>
-      </div> -->
-      <!-- <div class="form-group">
-        <label for="place">Location</label><span class="text-warning"> *</span>
-        {{> geocomplete}}
-      </div>
-      <div class="form-group">
-        <label for="sourceURL">Internet source</label>
-        <span id="urlTrouble" class="hidden">Did you put http:// in front?</span>
-        <input type="text" class="form-control" name="source" id="sourceURL" placeholder="http://"/>
-      </div>
-      <div class="form-group">
-        <label for="sourceURL">Note</label>
-        <textarea class="form-control" rows="3" id="imageComment"></textarea>
-      </div>
-      <button class="btn btn-default" id="uploadSubmit">
-        Upload <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
-      </button>  -->
-    <!-- </form> -->
-  </div>
+	{{> topBarFilters}}
+	{{> listImages}}
 </template>
 
 <template name="dropdown">
-  <div class="col col-xs-6 col-md-2">
-    <div class="sort-dashboard">
-      <select class="dropdown">
-        <option disabled selected hidden>Sort</option>
-        <option>Newest</option>
-        <option>Populair</option>
-      </select>
-    </div>
-  </div>
+	<div class="col col-xs-6 col-md-2">
+		<div class="sort-dashboard">
+			<select class="dropdown">
+				<option disabled selected hidden>Sort</option>
+				<option>Newest</option>
+				<option>Populair</option>
+			</select>
+		</div>
+	</div>
 </template>
 
 <template name="listImages">
-  <div class="main-content allImages">
-    <div class="container">
-      <div class="row">
-        <section class="image-grid">
-          {{#each allImages}}
-            {{> image}}
-          {{/each}}
-        </section>
-      </div>
-    </div>
-  </div>
+	<div class="main-content allImages">
+		<div class="container">
+			<div class="row">
+				<section class="image-grid">
+					{{#each allImages}}
+						{{> image}}
+					{{/each}}
+				</section>
+			</div>
+		</div>
+	</div>
 </template>

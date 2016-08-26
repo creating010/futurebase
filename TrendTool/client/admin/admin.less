@@ -1,0 +1,210 @@
+@import "../variables.less";
+@import "../boilerplate.less";
+
+.adminPage {
+	.searchField {
+		display: inline-block;
+		float: right;
+		margin-top: 17px;
+
+		input {
+			background: #f2f2f2;
+			border: 0;
+			box-sizing: border-box;
+			font-family: "Roboto", sans-serif;
+			font-size: 14px;
+			outline: 0;
+			padding: 15px;
+
+			&:focus {
+				width: 300px;
+			}
+		}
+	}
+	input[type="text"],
+	textarea,
+	.selectize-input {
+		outline: 0;
+		background: #f2f2f2;
+		width: 100%;
+		border: 0;
+		margin: 10px 0 15px;
+		padding: 15px;
+		box-sizing: border-box;
+		font-size: 14px;
+	}
+}
+
+.sidebar {
+	background: @blue;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	width: 52px;
+
+	.logo {
+		display: block;
+		height: 51px;
+		margin: 0 0 43px;
+
+		a {
+			display: block;
+			text-align: center;
+			text-decoration: none;
+
+			i {
+				color: @white;
+				display: block;
+				font-size: 1.5em;
+				line-height: 1.4em;
+				padding: 10px 0;
+			}
+		}
+	}
+	
+	li {
+		display: block;
+		margin-top: 1px;
+		position: relative;
+
+		a {
+			background: @blue;
+			display: block;
+			padding: 10px;
+			position: relative;
+			text-align: center;
+
+			i {
+				color: @white;
+				font-size: 1.2em;
+			}
+
+			&:hover,
+			&.active {
+				background: @light-blue;
+				i {
+					color: @dark-blue;
+				}
+			}
+		}
+	}
+}
+
+.mainContent {
+	background: @white;
+	margin-left: 52px;
+	padding: 2em;
+
+	.heading {
+		h3 {
+			color: @black;
+			display: inline-block;
+			font-size: 57px;
+			margin-bottom: 0.5em;
+		}
+
+		.makeNewGroup {
+			display: inline-block;
+			margin-top: -17px;
+		}
+	}
+
+	table {
+		margin-bottom: 20px;
+		max-width: 100%;
+		text-align: left;
+		width: 100%;
+
+		th,
+		td {
+			max-width: 350px;
+			padding: 15px;
+		}
+
+		thead th {
+			-webkit-touch-callout: none; 	/* iOS Safari */
+			-webkit-user-select: none;		/* Chrome/Safari/Opera */
+			-khtml-user-select: none;		/* Konqueror */
+			-moz-user-select: none;			/* Firefox */
+			-ms-user-select: none;			/* Internet Explorer/Edge */
+			user-select: none;				/* Non-prefixed version, currently
+											not supported by any browser */
+
+			border-bottom: 1px solid @grey;
+			
+			&.filter {
+				cursor: pointer;
+			}
+			&:not(.active):after {
+				color: @white;
+			}
+			&:hover:not(.active):after {
+				color: @grey;
+			}
+			&.asc:after,
+			&.desc:after {
+				font-family: FontAwesome;
+				font-style: normal;
+				font-weight: normal;
+				margin-left: 5px;
+				text-decoration: inherit;
+			}
+			&.asc:after {
+				content: "\f0d7";
+			}
+			&.desc:after {
+				content: "\f0d8";
+			}
+		}
+
+		tbody tr:nth-child(even) {
+			background-color: @light-grey;
+		}
+	}
+}
+
+.institute {
+	margin-bottom: 15px !important;
+
+	select:invalid {
+		color: @grey;
+	}
+}
+
+.tagsInGroups {
+    margin-bottom: 15px;
+	text-align: left;
+
+	.selectize-input {
+		outline: 0;
+		background: #f2f2f2;
+		width: 100%;
+		border: 0;
+		padding: 15px;
+		box-sizing: border-box;
+		font-size: 14px;
+
+		-webkit-border-radius: 0;
+		-moz-border-radius: 0;
+		border-radius: 0;
+
+		-webkit-box-shadow: none;
+		box-shadow: none; 
+
+		margin-bottom: 0;
+	}
+	.selectize-control.multi .selectize-input.has-items {
+		padding: 15px; 
+	}
+	.selectize-dropdown {
+		background: #f2f2f2;
+
+		.active {
+			background: @dark-blue;
+			color: @white;
+		}
+	}
+	.selectize-control.multi .selectize-input > div {
+		margin-bottom: 0;
+	}
+}

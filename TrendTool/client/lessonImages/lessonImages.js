@@ -1,179 +1,82 @@
 import './Grid.js';
 
-var uploadFile = null;
-var bheight;
-var uheight;
-
-Template.lessonImages.events({
-	'click .makeNew a': function(event){
-		event.preventDefault();
-
-		bheight = $('.top-bar').outerHeight();
-		uheight = $('.topBarUpload').outerHeight() + 100;
-
-		$('.top-bar').animate({
-			height: uheight
-		}, { duration: 500, queue: false });
-		$('.top-bar').toggleClass("uploading", 100, "easeInOutCubic",  { queue: false });
-		$('.topBarUpload').slideToggle({ duration: 500, animation: "easeInOutCubic", queue: false });
-	},
-	'click .close a': function(event){
-		event.preventDefault();
-
-		$('.top-bar').animate({
-			height: bheight
-		}, { duration: 500, queue: false });
-		$('.top-bar').toggleClass("uploading", 100, "easeInOutCubic",  { queue: false });
-		$('.topBarUpload').slideToggle({ duration: 500, animation: "easeInOutCubic", queue: false });
-	},
-});
-
-Template.topBarUpload.events({
-	'drop #dropzone': function(e, t){
-		e.preventDefault();
-
-		$(e.currentTarget).removeClass('dragover');
-		$(e.currentTarget).addClass('dropped');
-		$(e.currentTarget).html("<div class='dropzoneInner'><i class='fa fa-image'></i><p>Afbeelding: " + e.originalEvent.dataTransfer.files[0].name + "</p></div>");
-
-		// console.log(e.originalEvent.dataTransfer.files[0]);
-		uploadFile = e.originalEvent.dataTransfer.files[0];
-	},
-	'dragover #dropzone': function(e, t){
-		$(e.currentTarget).addClass('dragover');
-
-		return false;
-	},
-	'dragleave #dropzone': function(e, t){
-		$(e.currentTarget).removeClass('dragover');
-
-		return false;
-	},
-	'click .submitImage': function(e, t){
-		e.preventDefault();
-
-		if (uploadFile != null && $('#tagSelection').val() != null && $('#locationSelection').val() != null && $('#descriptionText').val() != null) {
-			var cloudinaryFolder;
-			var files = [];
-			var tagId = [];
-			var sourceURL = "";
-
-			if (Meteor.absoluteUrl() == "https://shoppinglab.hr.nl/") {
-				cloudinaryFolder = "shoppinglab-production";
-			} else {
-				cloudinaryFolder = "testing";
-			}
-
-			files.push(uploadFile);
-
-			$(".tagsSelector .item").each(function() {
-				tagId.push($(this).attr("data-value"));
-			});
-
-			return Cloudinary.upload(files, {
-				folder: cloudinaryFolder,
-				exif: "TRUE"
-			}, function(err, res) {
-				console.log("Upload Error: ");
-				console.log(err);
-				console.log("Result: ");
-				console.log(res);
-
-				if ($('#locationSelection') > 0) {
-					sourceURL = $('#locationSelection').value;
-				}
-
-				Meteor.call('addImage',
-					res.public_id,									// id Image
-					sourceURL,										// sourceURL
-					tagId,											// array with ids of tags
-					$('#formatted_address')[0].innerHTML,			// Adress
-					$('#gps')[0].innerHTML,							// GPS location
-					$('#descriptionText')[0].value,					// Description
-					Meteor.user().profile.bsrColor,					// bsrColor
-					Meteor.user().profile.nfcValue,					// nfcValue
-					Meteor.user().profile.fashionVal,				// fashionVal
-					Meteor.user().profile.techVal,					// textVal
-					Meteor.user().profile.cultureVal,				// cultureVal
-					Meteor.user().profile.politicsVal,				// politicsVal
-					Meteor.user().profile.econVal					// econVal
-				, (err, res) => {
-					if (!err) {
-						Bert.alert({
-							message: 'Signaal is geüpload.',
-							type: 'success',
-							style: 'growl-top-right',
-							icon: 'fa-check'
-						});
-					}
-				});
-
-				uploadFile = null;
-				$("#dropzone").html("<div class='dropzoneInner'><i class='fa fa-upload'></i><p>Sleep de afbeelding hier naartoe</p></div>");
-				$("#dropzone").removeClass('dropped');
-				e.dataTransfer.clearData();
-				// $("#tagSelection").clear();
-				tagId = [];
-				// $('#sourceURL')[0].value = "";
-				sourceURL = "";
-				$('#locationSelection')[0].value = "";
-				$('#formatted_address')[0].innerHTML = "";
-				$('#gps')[0].innerHTML = "";
-				$('#descriptionText')[0].value = "";
-			});
-		}
-	}
-});
-
-Template.topBarUpload.helpers({
-	// allTags: function () {
-	// 	return Tags.find({});
-	// }
-});
-
-Template.topBarUpload.onRendered(function() {
-	var allJSONTags = Tags.find().fetch();
-	var data = [];
-
-	for (var i = 0; i < allJSONTags.length; i++) {
-		data.push({
-			id: allJSONTags[i]['_id']["_str"],
-			name: allJSONTags[i]['name']
-		});
-	}
-
-	$('#tagSelection').selectize({
-		plugins: ['remove_button', 'restore_on_backspace'],
-		delimiter: ',',
-		persist: false,
-		options: data,
-		labelField: "name",
-		valueField: "id",
-		sortField: 'name',
-		searchField: 'name',
-		create: function(input) {
-			return {
-				value: input,
-				text: input
-			}
-		}
-	});
-});
-
-Template.topBarUpload.rendered = function () {
-	this.autorun(function () {
-		// Wait for API to be loaded
-		if (GoogleMaps.loaded()) {
-			$('#locationSelection').geocomplete({
-				details: ".locationSelector"
-			});
-		}
-	});
-}
+var className = 'Geen groep';
 
 Template.listImages.helpers({
 	allImages: function () {
-		return Images.find();
+		var econFilter = 0,
+			fashionFilter = 0,
+			techFilter = 0,
+			cultureFilter = 0,
+			politicsFilter = 0,
+			BSRFilter = { $in: [ "Red", "Yellow", "Green", "Blue" ] },
+			NFCFilter = 0;
+
+		for (var i = 0; i < Session.get('interestFilterArray').length; i++) {
+			switch(Session.get('interestFilterArray')[i]) {
+				case 'econVal':
+					econFilter = 3;
+				break;
+
+				case 'fashionVal':
+					fashionFilter = 3;
+				break;
+
+				case 'techVal':
+					techFilter = 3;
+				break;
+
+				case 'cultureVal':
+					cultureFilter = 3;
+				break;
+
+				case 'politicsVal':
+					politicsFilter = 3;
+				break;
+			}
+		}
+		for (var i = 0; i < Session.get("NFCFilterArray").length; i++) {
+			switch(Session.get("NFCFilterArray")[i]) {
+				case 'high':
+					NFCFilter = 57;
+				break;
+			}
+		}
+		for (var i = 0; i < Session.get("BSRFilterArray").length; i++) {
+			switch(Session.get("BSRFilterArray")[i]) {
+				case 'Red':
+					BSRFilter = "Red";
+				break;
+
+				case 'Yellow':
+					BSRFilter = "Yellow";
+				break;
+
+				case 'Green':
+					BSRFilter = "Green";
+				break;
+
+				case 'Blue':
+					BSRFilter = "Blue";
+				break;
+
+				case 'Empty':
+					BSRFilter = { $in: [ "Red", "Yellow", "Green", "Blue" ] };
+				break;
+			}
+		}
+
+		return Images.find({ 
+			'groupId': Meteor.user().profile.groupId,
+			'tags': { $in: Session.get("tagFilterArray") },
+			'econVal': { $gt: econFilter },
+			'fashionVal': { $gt: fashionFilter },
+			'techVal': { $gt: techFilter },
+			'cultureVal': { $gt: cultureFilter },
+			'politicsVal': { $gt: politicsFilter },
+			'bsrColor': BSRFilter,
+			'nfcValue': { $gt: NFCFilter }
+		});
 	}
 });
 
@@ -196,3 +99,14 @@ Template.listImages.events({
 		$thisCell.removeClass('is-expanded').addClass('is-collapsed');
 	}
 });
+
+Template.listImages.rendered = function () {
+	var groupId = Meteor.user().profile.groupId;
+	console.log('groupId', groupId);
+	console.log('group', Groups.find({ _id: groupId}).fetch());
+
+	if (Groups.find({ _id: groupId}).fetch()[0] != undefined) {
+		className = Groups.find({ _id: groupId}).fetch()[0].title;
+	}
+	Session.set("pageTitle", (Session.get("pageTitle") + ' (' + className + ')'));
+}

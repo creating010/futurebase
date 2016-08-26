@@ -1,5 +1,4 @@
-<template name="profile">
-	{{> editImage}}
+<!-- <template name="profile">
 	{{> topBar}}
 	{{> userListImages}}
 </template>
@@ -26,29 +25,26 @@
 
 <template name="topBarUpload">
 	<div class="topBarUpload">
-		{{#if waitingSpinner}}
-			{{> spinner}}
-		{{/if}}
 		<div class="col col-md-3">
 			<div class="dropzone" id="dropzone">
-				<input type="file" name="file" id="file" class="inputfile" />
-				<label for="file">
+				<div class="dropzoneInner">
+					<img src="#" alt="" class="imagePreview">
 					<i class="fa fa-upload"></i>
-					Choose a file
-				</label>
+					<p>Sleep de afbeelding hier naartoe</p>
+				</div>
 			</div>
 		</div>
 		<div class="col col-md-4">
 			<div class="tags">
-				<h3>Select your tags</h3>
+				<h3>Selecteer de tags</h3>
 				<div class="tagsSelector">
-					<input type="text" id="tagSelection" name="tagSelection" placeholder="Type here your tags">
+					<input type="text" id="tagSelection" name="tagSelection" placeholder="Typ een tag in">
 				</div>
 			</div>
 			<div class="location">
-				<h3>Location of the signaal</h3>
+				<h3>Locatie van het signaal</h3>
 				<div class="locationSelector">
-					<input id="locationSelection" type="text" placeholder="Type here the address" />
+					<input id="locationSelection" type="text" placeholder="Typ een adres in" />
 					<span class="help-block small" name="formatted_address" id="formatted_address"></span>
 					<span class="help-block small" name="location" id="gps"></span>
 				</div>
@@ -58,16 +54,10 @@
 			<div class="close">
 				<a href="#"><i class="fa fa-close"></i></a>
 			</div>
-			<div class="sourceURL">
-				<h3>Internetsource</h3>
-				<div class="internetSource">
-					<input type="text" id="urlSelection" name="urlSelection" placeholder="Type here the internetsource">
-				</div>
-			</div>
 			<div class="description">
-				<h3>Description</h3>
+				<h3>Beschrijving</h3>
 				<div class="descriptionText">
-					<textarea rows="3" id="descriptionText" name="descriptionText" placeholder="Type here your description of the signal"></textarea>
+					<textarea rows="3" id="descriptionText" name="descriptionText" placeholder="Typ hier een beschrijving van het signaal in"></textarea>
 				</div>
 			</div>
 			<div class="uploadImage">
@@ -95,4 +85,4 @@
 			</div>
 		</div>
 	</div>
-</template>
+</template> -->

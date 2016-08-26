@@ -1,20 +1,3 @@
-<template name="image1">
-	<div class="col col-md-6 col-lg-3 col-xl-2">
-		<div class="image">
-			<div class="imageTumbnail"> 
-				<img class="img-responsive" src="{{c.url public_id width=500 height=500 crop="fill"}}">
-			</div>
-			<div class="content">
-				<p>{{description}}</p>
-				<!-- <span class="glyphicon glyphicon-user"></span><span class="small"> {{username}}</span><br/> -->
-				<span class="glyphicon glyphicon-globe"></span><a href="{{sourceURL}}" class="small"> {{sourceURL}}</a><br/>
-				<span class="glyphicon glyphicon-map-marker"></span><span class="small"> {{formatted_address}}</span>
-				<!-- <div class="tags label label-default">{{tagNames tags}}</div> -->
-			</div>
-		</div>
-	</div>
-</template>
-
 <template name="image">
 	<div class="image is-collapsed">
 		<div class="image--basic">
@@ -24,16 +7,62 @@
 			<div class="arrow--up"></div>
 		</div>
 		<div class="image--expand">
+			<div class="row">
+				<div class="col col-lg-4">
+					<a  href="{{c.url public_id crop="fill"}}" target="_blank" class="imageBig"><img class="image--large" src="{{c.url public_id width=500 crop="fill"}}"/></a>
+				</div>
+				<div class="col col-lg-4">
+					<div class="image--details">
+						<h2>Tags</h2>
+						<ul class="selectedTags">
+							{{#each allImageTags}}
+								<li class="imageTag">
+									{{name}}
+								</li>
+							{{/each}}
+						</ul>
+						<h2>Description</h2>
+						<p>{{description}}</p><br/>
+						{{#if sourceURL}}
+							<i class="fa fa-globe"></i><p class="smallThings"><a href="https://{{sourceURL}}" target="_blank" class="small">{{sourceURL}}</a></p><br/>
+						{{/if}}
+						<i class="fa fa-map-marker"></i><p class="smallThings">{{formatted_address}}</p>
+					</div>
+				</div>
+			</div>
 			<a href="#close-jump-1" class="expand__close"></a>
-			<img class="image--large" src="{{c.url public_id width=500 crop="fill"}}"/>
-			<div class="image--details">
-				<h3>Veggies sunt bona vobis</h3>
-				<p>{{description}}</p>
-				{{#if URLis ""}}
-				
-				{{else}}
-					<a href="{{sourceURL}}">Ga naar de bron</a>
-				{{/if}}
+			{{#if profile}}
+				<div class="profileActions">
+					<a><i class="fa fa-edit"></i></a>
+					<a><i class="fa fa-trash second"></i></a>
+				</div>
+			{{/if}}
+		</div>
+	</div>
+</template>
+
+<template name="editImage">
+	<div class="registerLogin editImage">
+		<div class="login-page">
+			<div class="close">
+				<a href="#"><i class="fa fa-close"></i></a>
+			</div>
+			<div class="form">
+				<form class="login-form">
+					<h3>Edit image</h3>
+					<img src="{{c.url getImage width=390 height=390 crop="fill"}}" alt="">
+					<div class="editTagsSelector">
+						<input type="text" id="editTagSelection" name="tagSelection" placeholder="Type here your tags">
+					</div>
+					<textarea rows="3" id="editDescription" name="newDescription" placeholder="Type here your description of the signal" value="{{getDescription}}"></textarea>
+					<input type="text" id="editURL" value="{{getUrl}}" placeholder="Type here the internetsource"/>
+					<div class="editLocationSelection">
+						<input id="editLocationSelection" type="text" placeholder="Type here the address" />
+						<span class="help-block small" name="formatted_address" id="editFormatted_address"></span>
+						<span class="help-block small" name="location" id="editGps"></span>
+					</div>
+					<input type="submit" value="Edit image" id="imageSubmit">
+				</form>
 			</div>
 		</div>
 	</div>
