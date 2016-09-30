@@ -14,12 +14,10 @@
 }
 
 .topBarUpload {
-
 	h3 {
 		color: @white;
 		font-size: 25px;
 	}
-
 	.dropzone {
 		background-color: @light-blue;
 		border: 3px dashed @dark-blue;
@@ -85,8 +83,21 @@
 					color: @white;
 				}
 			}
+			.selectize-control.multi .selectize-input [data-value] {
+				background-color: @blue;
+				background-image: -moz-linear-gradient(top, @light-blue, @blue);
+				background-image: -o-linear-gradient(top, @light-blue, @blue);
+				background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@light-blue), to(@blue));
+				background-image: -webkit-linear-gradient(top, @light-blue, @blue);
+				background-image: linear-gradient(to bottom, @light-blue, @blue);
+				background: @blue;
+			}
 			.selectize-control.multi .selectize-input > div {
-				margin-bottom: 0;
+				background: @blue;
+				border: 1px solid @dark-blue;
+			}
+			.selectize-control.plugin-remove_button [data-value] .remove {
+				border-left: 1px solid @dark-blue;
 			}
 		}
 	}
@@ -101,8 +112,11 @@
 
 	.uploadImage {
 		.create-new {
-			margin-left: 25%;
-			position: initial;
+			position: inherit;
+			
+			a {
+				width: 100%;
+			}
 		}
 	}
 

@@ -86,16 +86,16 @@ Router.route('/admin', function () {
 	if (Meteor.userId()) {
 		this.render('loading');
 
-		if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
+		// if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
 			if (this.ready()) {
 				this.render('admin');
 			} else {
 				this.render('loading');
 			}
-		} else {
-			Router.go('/');
-			Session.set('error', 'You have not the right to be here, get out as soon as possible!');
-		}
+		// } else {
+		// 	Router.go('/');
+		// 	Session.set('error', 'You have not the right to be here, get out as soon as possible!');
+		// }
 	} else {
 		Router.go('/');
 		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");
@@ -113,16 +113,16 @@ Router.route('/admin/groups', function () {
 	if (Meteor.userId()) {
 		this.render('loading');
 
-		if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
+		// if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
 			if (this.ready()) {
 				this.render('groups');
 			} else {
 				this.render('loading');
 			}
-		} else {
-			Router.go('/');
-			Session.set('error', 'You have not the right to be here, get out as soon as possible!');
-		}
+		// } else {
+		// 	Router.go('/');
+		// 	Session.set('error', 'You have not the right to be here, get out as soon as possible!');
+		// }
 	} else {
 		Router.go('/');
 		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");
@@ -138,16 +138,16 @@ Router.route('/admin/tags', function () {
 	if (Meteor.userId()) {
 		this.render('loading');
 
-		if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
+		// if (Roles.userIsInRole(Meteor.userId(), ['docent'], Roles.GLOBAL_GROUP)) {
 			if (this.ready()) {
 				this.render('tags');
 			} else {
 				this.render('loading');
 			}
-		} else {
-			Router.go('/');
-			Session.set('error', 'You have not the right to be here, get out as soon as possible!');
-		}
+		// } else {
+		// 	Router.go('/');
+		// 	Session.set('error', 'You have not the right to be here, get out as soon as possible!');
+		// }
 	} else {
 		Router.go('/');
 		Notifications.error('error', "You aren't logged in yet! Please make sure you have a account.");

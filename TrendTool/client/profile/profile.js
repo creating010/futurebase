@@ -1,6 +1,7 @@
 var uploadFile = null,
 	bheight,
-	uheight;
+	uheight,
+	$select;
 
 Template.topBar.events({
 	'click .makeNew a': function(event){
@@ -99,7 +100,8 @@ Template.topBarUpload.events({
 							$('#dropzone .inputfile').attr('disabled', false);
 
 							if (tagId.length > 0) {
-								$("#tagSelection").clear();
+								var selectize = $select[0].selectize;
+								selectize.clear();
 								tagId 								= [];
 							}
 							uploadFile 								= null;
@@ -158,7 +160,7 @@ Template.topBarUpload.onRendered(function() {
 			});
 		}
 
-		$('#tagSelection').selectize({
+		$select = $('#tagSelection').selectize({
 			plugins: ['remove_button', 'restore_on_backspace'],
 			delimiter: ',',
 			persist: false,
@@ -181,7 +183,7 @@ Template.topBarUpload.onRendered(function() {
 			});
 		}
 
-		$('#tagSelection').selectize({
+		$select = $('#tagSelection').selectize({
 			plugins: ['remove_button', 'restore_on_backspace'],
 			delimiter: ',',
 			persist: false,

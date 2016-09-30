@@ -10,18 +10,19 @@
 </head>
 
 <body>
-	{{#if adminPage}}
-		
-	{{else}}
-		{{#if currentUser}}
+		{{#if adminPage}}
 			
 		{{else}}
-			{{> registerLogin}}
+			{{#if currentUser}}
+				
+			{{else}}
+				{{> registerLogin}}
+			{{/if}}
+		<div class="page">
+			{{> header}}
+			{{> notifications}}
+		</div>
 		{{/if}}
-
-		{{> header}}
-		{{> notifications}}
-	{{/if}}
 
 	<!-- {{> footer}} -->
 </body>
@@ -36,46 +37,78 @@
 					</div>
 				</div>
 				<div class="col col-md-3 col-md-offset-6">
-					<nav>
-						<ul>
-							<li><a href="{{ pathFor 'map' }}">Map</a></li>
-							{{#if currentUser}}
+					<div class="menu">
+						<a href="#" class="handler">
+							<div></div>
+							<div></div>
+							<div></div>
+						</a>
+						<div class="mobile-menu-1 header-4-mobile-menu-1" id="header-4-27497-mobile-menu-1">
+							<div class="outer">
+								<div class="inner">
+									<div class="menu-1">
+										<div class="fw_main_wrapper">
+											<ul>
+												{{#if currentUser}}
+													<li><a href="{{ pathFor 'map' }}">Map</a></li>
+													<li><a href="{{ pathFor 'dashboard' }}">Dashboard</a></li>
+													<li><a href="{{ pathFor 'profile' }}"><i class="fa fa-user"></i></a>
+														<div class="fw_subs_wrapper">
+															<ul>
+																<li><a href="#" class="logout">Logout</a></li>
+															</ul>
+														</div>
+													</li>
+												{{else}}
+													<li class="user">
+														<a href="{{ pathFor 'profile' }}" class="notLoggedIn"><i class="fa fa-user"></i></a>
+													</li>
+												{{/if}}
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- <nav>
+					<ul>
+						<li><a href="{{ pathFor 'map' }}">Map</a></li>
+						{{#if currentUser}}
 							<li><a href="{{ pathFor 'dashboard' }}" class="active">Dashboard</a></li>
 							<li class="user loggedIn">
 								<a href="{{ pathFor 'profile' }}" class=""><i class="fa fa-user"></i></a>
 								<ul class="dropdownMenu">
 									<li><a href="#" class="logout">Logout</a></li>
-									<!-- <li><a href="#" class="logout">Uitloggen</a></li>
-									<li><a href="#" class="logout">Uitloggen</a></li> -->
 								</ul>
 							</li>
-							{{else}}
-							<li class="user notLoggedIn">
-								<a href="#"><i class="fa fa-user"></i></a>
-							</li>
-							{{/if}}
-						</ul>
-					</nav>
-				</div>
+						{{else}}
+						<li class="user notLoggedIn">
+							<a href="#"><i class="fa fa-user"></i></a>
+						</li>
+						{{/if}}
+					</ul>
+				</nav> -->
 			</div>
 			<div class="second">
 				<div class="row">
-					<div class="col col-xs-4 col-md-1">
+					<div class="col hidden-xs visible-md col-md-2">
 						<div class="logo">
 							<img src="assets/images/TrendLab.png">
 						</div>
 					</div>
-					<div class="col col-xs-4 col-md-8">
+					<div class="col col-xs-6 col-md-7 col-xl-8">
 						<div class="title">
 							<h1>{{getTitle}}</h1>
 						</div>
 					</div>
 					{{#if currentUser}}
-					<div class="col col-xs-4 col-md-2 col-md-offset-1">
-						<div class="account">
-							<a href="{{ pathFor 'profile' }}" class="btn icon-upload">{{userImageCount}}</a>
+						<div class="col col-xs-6 col-md-2 col-md-offset-1 col-xl-offset-0">
+							<div class="account">
+								<a href="{{ pathFor 'profile' }}" class="btn icon-upload">{{userImageCount}}</a>
+							</div>
 						</div>
-					</div>
 					{{/if}}
 				</div>
 			</div>
@@ -112,7 +145,7 @@
 				</form>
 				<form class="register-form form2">
 					<h3>Registreren</h3>
-					<p class="infoText">Where do you interested in? Indicate whether you find the topic interesting (5) or not (1).</p>
+					<p class="infoText">Indicate whether you find the topic interesting (5) or not (1).</p>
 
 					<div class="intrests">
 						<div class="interst">
@@ -155,7 +188,7 @@
 				</form>
 				<form class="register-form form3">
 					<h3>Register</h3>
-					<p class="infoText">(If you can't understand dutch, skip this test) We willen je vragen mee te doen aan de BSR test. Deze test geeft een idee hoe jij naar ‘veranderen’ kijkt. Het verkent de waarden motieven en behoeften. Hiermee maken we de FutureBase rijker en heb jij straks meer aan de verzameling signalen.</p>
+					<p class="infoText">(If you can't understand Dutch, skip this test) We willen je vragen mee te doen aan de BSR test. Deze test geeft een idee hoe jij naar ‘veranderen’ kijkt. Het verkent de waarden motieven en behoeften. Hiermee maken we de FutureBase rijker en heb jij straks meer aan de verzameling signalen.</p>
 
 					<a href="https://smartweb3.smartagent.nl/ennis/surveys/bsrhr/?sessionid=" target="_blank" class="link">Link</a>
 					<input type="submit" value="Back" class="return">
@@ -168,7 +201,7 @@
 
 					<div class="nfcTest">
 						<div class="nfcQuestion">
-							<p>Als ik moet kiezen heb ik liever een complicated problem t dan een simpel probleem.</p>
+							<p>Als ik moet kiezen heb ik liever een ingewikkeld probleem, dan een simpel probleem.</p>
 							<p class="right">Eens noch oneens</p>
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC1">
 						</div>
@@ -178,7 +211,7 @@
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC2">
 						</div>
 						<div class="nfcQuestion">
-							<p>TDenken is niet precies mijn idee van plezier hebben.</p>
+							<p>Denken is niet precies mijn idee van plezier hebben.</p>
 							<p class="right">Eens noch oneens</p>
 							<input type=range min=1 max=5 value=3 step=1 list=steps id="registerNFC3">
 						</div>

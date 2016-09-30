@@ -208,3 +208,61 @@
 		margin-bottom: 0;
 	}
 }
+
+.editGroup {
+	input,
+	input[type="text"],
+	textarea,
+	.selectize-input {
+		outline: 0;
+		background: #f2f2f2;
+		width: 100%;
+		border: 0;
+		margin: 10px 0 15px;
+		padding: 15px;
+		box-sizing: border-box;
+		font-size: 14px;
+	}
+
+	.editTagsSelector {
+		text-align: left;
+		
+		.selectize-input {
+			-webkit-border-radius: 0;
+			-moz-border-radius: 0;
+			border-radius: 0;
+
+			-webkit-box-shadow: none;
+			box-shadow: none; 
+
+			margin-bottom: 0;
+		}
+		.selectize-control.multi .selectize-input.has-items {
+			padding: 15px; 
+		}
+		.selectize-dropdown {
+			background: #f2f2f2;
+
+			.active {
+				background: @dark-blue;
+				color: @white;
+			}
+		}
+		.selectize-control.multi .selectize-input [data-value] {
+			background-color: @blue;
+			background-image: -moz-linear-gradient(top, @light-blue, @blue);
+			background-image: -o-linear-gradient(top, @light-blue, @blue);
+			background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@light-blue), to(@blue));
+			background-image: -webkit-linear-gradient(top, @light-blue, @blue);
+			background-image: linear-gradient(to bottom, @light-blue, @blue);
+			background: @blue;
+		}
+		.selectize-control.multi .selectize-input > div {
+			background: @blue;
+			border: 1px solid @dark-blue;
+		}
+		.selectize-control.plugin-remove_button [data-value] .remove {
+			border-left: 1px solid @dark-blue;
+		}
+	}
+}

@@ -52,7 +52,7 @@ Template.topBarFilters.helpers({
 	allNFCOptions: function() {
 		var NFCOptions = [];
 
-		NFCOptions.push({ 'name': 'Highly curios', 'value': 'high' });
+		NFCOptions.push({ 'name': 'Highly curious', 'value': 'high' });
 
 		return NFCOptions;
 	},

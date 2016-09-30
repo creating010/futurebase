@@ -166,6 +166,9 @@ Template.admin.events({
 
 /***********************************************************************************/
 
+var $newSelect,
+	$editSelect;
+
 Template.groups.helpers({
 	allGroups: function() {
 		var results;
@@ -254,7 +257,44 @@ Template.groups.events({
 	'click td .edit': function(event){
 		event.preventDefault();
 
-		Session.set('target' + this._id, true);
+		var data = [];
+
+		// Session.set('target' + this._id, true);
+		Session.set('editGroupId', this._id);
+		Session.set('editGroupName', this.name);
+		Session.set('editGroupTitle', this.title);
+		Session.set('editGroupToken', this.token);
+		Session.set('editGroupInstitute', this.institute);
+		Session.set('editGroupTags', this.tags);
+
+		var allTags = Tags.find().fetch();
+		var data = [];
+
+		for (var i = 0; i < allTags.length; i++) {
+			data.push({
+				id: allTags[i]['_id'],
+				name: allTags[i]['name']
+			});
+		}
+
+		$editSelect = $(document.getElementById('editTagSelection')).selectize({
+			delimiter: ',',
+			labelField: "name",
+			options: data,
+			persist: false,
+			plugins: ['remove_button', 'restore_on_backspace'],
+			searchField: 'name',
+			sortField: 'name',
+			valueField: "id"
+		});
+		var selectize = $editSelect[0].selectize;
+
+		for (var i = 0; i < Session.get('editGroupTags').length; i++) {
+			selectize.addItem(Session.get('editGroupTags')[i]);
+		}
+
+		$('.editGroup.registerLogin').fadeToggle("slow");
+		window.scrollTo(0, 0);
 	},
 	'click td .delete': function(event){
 		event.preventDefault();
@@ -328,6 +368,31 @@ Template.groups.events({
 	}
 });
 
+Template.groups.onRendered(function() {
+	var allTags = Tags.find().fetch();
+	var data = [];
+
+	for (var i = 0; i < allTags.length; i++) {
+		data.push({
+			id: allTags[i]['_id'],
+			name: allTags[i]['name']
+		});
+	}
+
+	// $('.newTags').each(function() {
+	// 	newSelect = $(this).selectize({
+	// 		plugins: ['remove_button', 'restore_on_backspace'],
+	// 		delimiter: ',',
+	// 		persist: false,
+	// 		options: data,
+	// 		labelField: "name",
+	// 		valueField: "id",
+	// 		sortField: 'name',
+	// 		searchField: 'name'
+	// 	})
+	// });
+});
+
 Template.makeNewGroup.events({
 	'click .close a': function(event){
 		event.preventDefault();
@@ -362,6 +427,8 @@ Template.makeNewGroup.events({
 						$('#groupTitle')[0].value = '';
 						$('#groupToken')[0].value = '';
 						$('#groupInstitute').prop('selectedIndex', 0);
+						var newSelectize = $newSelect[0].selectize;
+						newSelectize.clear();
 					} else {
 						console.log(err);
 					}
@@ -393,31 +460,6 @@ Template.makeNewGroup.events({
 	}
 });
 
-Template.groups.onRendered(function() {
-	var allTags = Tags.find().fetch();
-	var data = [];
-
-	for (var i = 0; i < allTags.length; i++) {
-		data.push({
-			id: allTags[i]['_id'],
-			name: allTags[i]['name']
-		});
-	}
-
-	$('.newTags').each(function() {
-		$(this).selectize({
-			plugins: ['remove_button', 'restore_on_backspace'],
-			delimiter: ',',
-			persist: false,
-			options: data,
-			labelField: "name",
-			valueField: "id",
-			sortField: 'name',
-			searchField: 'name'
-		})
-	});
-});
-
 Template.makeNewGroup.onRendered(function() {
 	var allTags = Tags.find().fetch();
 	var data = [];
@@ -429,7 +471,7 @@ Template.makeNewGroup.onRendered(function() {
 		});
 	}
 
-	$('#groupTags').selectize({
+	$newSelect = $('#groupTags').selectize({
 		plugins: ['remove_button', 'restore_on_backspace'],
 		delimiter: ',',
 		persist: false,
@@ -439,6 +481,73 @@ Template.makeNewGroup.onRendered(function() {
 		sortField: 'name',
 		searchField: 'name'
 	});
+});
+
+Template.editGroup.helpers({
+	editGroupName: function () {
+		return Session.get('editGroupName');
+	},
+	editGroupTitle: function () {
+		return Session.get('editGroupTitle');
+	},
+	editGroupToken: function () {
+		return Session.get('editGroupToken');
+	},
+	editGroupInstitute: function () {
+		return Session.get('editGroupInstitute');
+	},
+	editGroupTags: function () {
+		return Session.get('editGroupTags');
+	},
+});
+
+Template.editGroup.events({
+	'click .close a': function(event){
+		event.preventDefault();
+
+		// Session.set('target' + this._id, false);
+		$('.registerLogin.editGroup').fadeToggle("slow", function() {
+			Session.set('editGroupName', false);
+			Session.set('editGroupTitle', false);
+			Session.set('editGroupToken', false);
+			Session.set('editGroupTags', false);
+			$editSelect[0].selectize.clear();
+		});
+	},
+	'click #editGroupSubmit': function(event){
+		event.preventDefault();
+
+		if ($('#editGroupName').val() != null && $('#editGroupTitle').val() != null && $('#editGroupToken').val() != null) {
+			var tagId 		= [];
+
+			$(".editTagsSelector .item").each(function() {
+				tagId.push($(this).attr("data-value"));
+			});
+
+			Meteor.call('updateGroup',
+				Session.get('editGroupId'),
+				$('#editGroupName').val(),
+				$('#editGroupTitle').val(),
+				$('#editGroupInstitute').val(),
+				$('#editGroupToken').val(),
+				tagId,
+				function (error, result) {
+					if (!error) {
+						$('.registerLogin.editGroup').fadeToggle("slow", function() {
+							Session.set('editGroupId', false);
+							Session.set('editGroupName', false);
+							Session.set('editGroupTitle', false);
+							Session.set('editGroupToken', false);
+							Session.set('editGroupInstitute', false);
+							$editSelect[0].selectize.clear();
+						});
+					} else {
+						console.log(error);
+					}
+				}
+			);
+		}
+	}
 });
 
 /***********************************************************************************/

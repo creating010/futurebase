@@ -1,4 +1,5 @@
-var data = [];
+var data = [],
+	$select;
 
 Template.image.helpers({
 	// listing all images in the database
@@ -52,7 +53,7 @@ Template.image.events({
 			}
 		}
 
-		var $select = $(document.getElementById('editTagSelection')).selectize({
+		$select = $(document.getElementById('editTagSelection')).selectize({
 			delimiter: ',',
 			labelField: "name",
 			options: data,
@@ -63,7 +64,6 @@ Template.image.events({
 			valueField: "id"
 		});
 		var selectize = $select[0].selectize;
-
 
 		Session.set('target' + this._id, true);
 		Session.set('editId', this._id);
@@ -126,8 +126,7 @@ Template.editImage.events({
 			Session.set('editDescription', false);
 			Session.set('editUrl', false);
 			Session.set('editGps', false);
-
-			$('#tagSelection').selectize()[0].selectize.clear();
+			$select[0].selectize.clear();
 		});
 	},
 	'click #imageSubmit': function(event){
@@ -140,12 +139,13 @@ Template.editImage.events({
 			sourceURL.replace('https://', '');
 			sourceURL.replace('http://', '');
 
-			$(".tagsSelector .item").each(function() {
+			$(".editTagsSelector .item").each(function() {
 				tagId.push($(this).attr("data-value"));
 			});
 
 			Meteor.call('updateImage', 
 				Session.get('editId'),
+				tagId,
 				sourceURL, 
 				$('#editFormatted_address')[0].innerHTML, 
 				$('#editGps')[0].innerHTML, 
@@ -159,8 +159,7 @@ Template.editImage.events({
 							Session.set('editDescription', false);
 							Session.set('editUrl', false);
 							Session.set('editGps', false);
-
-							$('#editTagSelection').selectize()[0].selectize.clear();
+							$select[0].selectize.clear();
 						});
 					} else {
 						console.log(error);

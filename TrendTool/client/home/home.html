@@ -5,11 +5,15 @@
 				<div class="homeTitle">
 					<div class="col col-lg-6">
 						<div class="left">
-							<h1>Enter the <span>futurebases</span></h1>
+							<h1>Enter the <span>futurebase</span></h1>
 							<p>Dit is een project waarin er gebouwd wordt aan een FutureBase. Deze database helpt je de toekomst in kaart te brengen. In de FutureBase werk je, samen met andere studenten, aan een waardevolle verzameling van vroege signalen die het in zich hebben groter te worden. Het geeft je inzicht en houvast in de wereld van morgen. De wereld waarvoor je je product, strategie of concept ontwerpt. Deze database is er voor en door jullie. Voor jullie: samen verzamelen je meer dan 1000 signalen, ze helpen bij het bouwen van je concept of speculatie.</p>
-							<div class="login">
-								<a class="btn btn-square" href="#">Login / register</a>
-							</div>
+							{{#if loggedIn}}
+
+							{{else}}
+								<div class="login">
+									<a class="btn btn-square" href="#">Login / register</a>
+								</div>
+							{{/if}}
 						</div>
 					</div>
 					<div class="col col-lg-6">

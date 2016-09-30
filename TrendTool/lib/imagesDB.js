@@ -27,13 +27,14 @@ Meteor.methods({
 			'econVal': econVal							// econValue of uplader
 		})
 	},
-	updateImage: function(imageId, sourceURL, formatted_address, gps, description) {
+	updateImage: function(imageId, tagsIds, sourceURL, formatted_address, gps, description) {
 		if (! Meteor.userId()) {
 			throw new Meteor.Error("not-authorized");
 		}
 
 		Images.update(imageId, { $set: {
 			'sourceURL': sourceURL,
+			'tags': tagsIds,
 			'formatted_address': formatted_address,
 			'gps': gps,
 			'description': description

@@ -13,7 +13,7 @@
 		<div class="mainContent">
 			<div class="section">
 				<div class="heading">
-					<h3>Studenten</h3>
+					<h3>Gebruikers</h3>
 					<div class="searchField">
 						<input type="text" placeholder="Zoeken" id="search"/>
 					</div>
@@ -78,6 +78,7 @@
 
 <template name="groups">
 	{{> makeNewGroup}}
+	{{> editGroup}}
 	<div class="adminPage">
 		<div class="sidebar">
 			<div class="logo">
@@ -171,7 +172,7 @@
 </template>
 
 <template name="makeNewGroup">
-	<div class="registerLogin">
+	<div class="registerLogin makeNewGroup">
 		<div class="login-page">
 			<div class="close">
 				<a href="#"><i class="fa fa-close"></i></a>
@@ -205,6 +206,46 @@
 					</div>
 					<!-- <button class="login">Aanmaken</button> -->
 					<input type="submit" value="Aanmaken" id="groupSubmit">
+				</form>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="editGroup">
+	<div class="registerLogin editGroup">
+		<div class="login-page">
+			<div class="close">
+				<a href="#"><i class="fa fa-close"></i></a>
+			</div>
+			<div class="form">
+				<form class="login-form">
+					<h3>Bewerk {{editGroupName}}</h3>
+					<select required id="editGroupInstitute" class="institute">
+						<option value="CMI">CMI</option>
+						<option value="COM">COM</option>
+						<option value="EAS">EAS</option>
+						<option value="IBK">IBK</option>
+						<option value="IFM">IFM</option>
+						<option value="IGO">IGO</option>
+						<option value="ISO">ISO</option>
+						<option value="IvG">IvG</option>
+						<option value="LERO">LERO</option>
+						<option value="PABO">PABO</option>
+						<option value="RAC">RAC</option>
+						<option value="RBS">RBS</option>
+						<option value="RMU">RMU</option>
+						<option value="WdK">WdK</option>
+						<option value="Extern">Extern</option>
+					</select>
+					<input type="text" placeholder="Groepnaam" id="editGroupName" value="{{editGroupName}}"/>
+					<input type="text" placeholder="Werktitel" id="editGroupTitle" value="{{editGroupTitle}}"/>
+					<input type="text" placeholder="Token" id="editGroupToken"  value="{{editGroupToken}}"/>
+					<div class="editTagsSelector">
+						<input type="text" id="editTagSelection" name="tagSelection" placeholder="Type here your tags">
+					</div>
+					<!-- <button class="login">Aanmaken</button> -->
+					<input type="submit" value="Bewerken" id="editGroupSubmit">
 				</form>
 			</div>
 		</div>

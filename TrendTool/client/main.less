@@ -103,11 +103,15 @@ header {
 		.title {
 			color: @black;
 			font-size: 57px;
-			margin-left: 50px;
 		}
 		.account {
 			float: right;
 			margin-top: 17px;
+		}
+		@media (min-width: 768px) {
+			.title {
+				margin-left: 50px;
+			}
 		}
 	}
 }
