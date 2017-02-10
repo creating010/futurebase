@@ -4,7 +4,7 @@
     {
       "host": "145.24.222.146",
       "username": "ubuntu-eppij",
-      "password": "FB443z",
+      "password": "******",
       // or pem file (ssh based authentication)
       // WARNING: Keys protected by a passphrase are not supported
       //"pem": "~/.ssh/id_rsa"
