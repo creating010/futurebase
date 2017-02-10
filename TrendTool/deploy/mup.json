@@ -3,7 +3,7 @@
   "servers": [
     {
       "host": "145.24.222.146",
-      "username": "ubuntu-eppij",
+      "username": "***********",
       "password": "******",
       // or pem file (ssh based authentication)
       // WARNING: Keys protected by a passphrase are not supported
